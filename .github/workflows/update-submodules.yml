@@ -37,7 +37,7 @@ jobs:
         cd ../..
         git add lib/FFXIVClientStructs
         git commit --message "Update ClientStructs"
-        git push origin csupdate/$${{ matrix.branches }}
+        git push origin csupdate-${{ matrix.branches }}
     - name: Create PR
       run: |
         gh pr create --head --fill --base ${{ matrix.branches }}
