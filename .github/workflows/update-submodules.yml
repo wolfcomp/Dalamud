@@ -1,14 +1,14 @@
 name: Submodule daily check
 on: 
-  workflow_dispatch
   schedule:
-    - cron: 0 0 */1 * *
+    - cron: "0 0 */1 * *"
+  workflow_dispatch:
 
 jobs:
   check:
     name: Submodule check
     runs-on: ubuntu-latest
-    stratigy:
+    strategy:
       matrix:
         branches: [master]
 
