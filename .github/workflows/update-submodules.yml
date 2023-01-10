@@ -31,6 +31,7 @@ jobs:
         git config --global pull.rebase false
     - name: Update submodule
       run: |
+        git checkout -b csupdate-${{ matrix.branches }}
         cd lib/FFXIVClientStructs
         git fetch
         git reset --hard origin/main
