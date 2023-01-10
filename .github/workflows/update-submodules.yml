@@ -1,0 +1,39 @@
+name: Submodule daily check
+on: 
+  schedule:
+    - cron: 0 0 */1 * *
+
+jobs:
+  check:
+    name: Submodule check
+    runs-on: ubuntu-latest
+    stratigy:
+      matrix:
+        branches: [master]
+
+    defaults: 
+      run:
+        shell: bash
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: true
+        ref: ${{ matrix.branches }}
+    - name: Create update branch
+      run: git checkout -b csupdate/$${{ matrix.branches }}
+    - name: Initialize mandatory git config
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email noreply@github.com
+    - name: Update submodule
+      run: |
+        cd lib/FFXIVClientStructs
+        git pull
+        cd ../..
+        git commit --message "Update ClientStructs"
+        git push origin csupdate/$${{ matrix.branches }}
+    - name: Create PR
+      run: |
+        gh pr create --head --fill --base ${{ matrix.branches }}
