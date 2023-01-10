@@ -27,7 +27,7 @@ jobs:
       run: git checkout -b csupdate/${{ matrix.branches }}
     - name: Initialize mandatory git config
       run: |
-        git config --global user.name "GitHub Actions"
+        git config --global user.name "github-actions[bot]"
         git config --global user.email noreply@github.com
         git config --global pull.rebase false
     - name: Update submodule
@@ -41,5 +41,7 @@ jobs:
         git commit --message "Update ClientStructs"
         git push origin csupdate-${{ matrix.branches }}
     - name: Create PR
+      with:
+        GH_TOKEN: ${{ github.token }}
       run: |
         gh pr create --head --fill --base ${{ matrix.branches }}
