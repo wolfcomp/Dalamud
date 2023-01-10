@@ -2,6 +2,7 @@ name: Submodule daily check
 on: 
   schedule:
     - cron: 0 0 */1 * *
+  workflow_dispatch: true
 
 jobs:
   check:
