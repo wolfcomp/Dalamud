@@ -44,7 +44,5 @@ jobs:
         git commit --message "Update ClientStructs"
         git push origin csupdate-${{ matrix.branches }}
     - name: Create PR
-      with:
-        GH_TOKEN: ${{ github.token }}
       run: |
         gh pr create --head csupdate-${{ matrix.branches }} --title "Update ClientStructs (github-actions[bot])" --body "" --base ${{ matrix.branches }}
