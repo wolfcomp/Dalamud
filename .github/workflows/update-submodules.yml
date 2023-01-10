@@ -32,7 +32,8 @@ jobs:
     - name: Update submodule
       run: |
         cd lib/FFXIVClientStructs
-        git pull origin main --allow-unrelated-histories
+        git fetch
+        git reset --hard origin/main
         cd ../..
         git add lib/FFXIVClientStructs
         git commit --message "Update ClientStructs"
