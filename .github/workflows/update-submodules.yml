@@ -4,9 +4,6 @@ on:
     - cron: "0 0 */1 * *"
   workflow_dispatch:
 
-env:
-  GH_TOKEN: ${{ github.token }}
-
 jobs:
   check:
     name: Submodule check
@@ -45,4 +42,5 @@ jobs:
         git push origin csupdate-${{ matrix.branches }}
     - name: Create PR
       run: |
+        gh auth login --with-token ${{ github.token }}
         gh pr create --head csupdate-${{ matrix.branches }} --title "Update ClientStructs (github-actions[bot])" --body "" --base ${{ matrix.branches }}
