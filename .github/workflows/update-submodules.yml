@@ -30,9 +30,7 @@ jobs:
         git config user.email noreply@github.com
     - name: Update submodule
       run: |
-        cd lib/FFXIVClientStructs
-        git pull origin/master
-        cd ../..
+        git submodule update lib/FFXIVClientStructs
         git commit --message "Update ClientStructs"
         git push origin csupdate/$${{ matrix.branches }}
     - name: Create PR
