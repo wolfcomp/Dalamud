@@ -26,9 +26,9 @@ jobs:
       run: git checkout -b csupdate/${{ matrix.branches }}
     - name: Initialize mandatory git config
       run: |
-        git config user.name "GitHub Actions"
-        git config user.email noreply@github.com
-        git config pull.rebase false
+        git config --global user.name "GitHub Actions"
+        git config --global user.email noreply@github.com
+        git config --global pull.rebase false
     - name: Update submodule
       run: |
         cd lib/FFXIVClientStructs
