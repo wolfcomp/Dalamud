@@ -42,9 +42,9 @@ jobs:
       id: changes
       run: |
         if [[ -z 'git status --porcelain' ]]; then
-          echo ::set-output name=changed::1
+          echo "changed=1" >> $GITHUB_OUTPUT
         else
-          echo ::set-output name=changed::0
+          echo "changed=0" >> $GITHUB_OUTPUT
         fi
     - name: Push and Create PR
       if: steps.changes.output.changed == 1
