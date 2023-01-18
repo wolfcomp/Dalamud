@@ -38,11 +38,20 @@ jobs:
         git fetch
         git reset --hard origin/main
         cd ../..
+    - name: Check for changes
+      id: changes
+      run: |
+        if [[ -z 'git status --porcelain' ]]; then
+          echo ::set-output name=changed::1
+        else
+          echo ::set-output name=changed::0
+        fi
+    - name: Push and Create PR
+      if: steps.changes.output.changed == 1
+      run: |
         git add lib/FFXIVClientStructs
         git commit --message "Update ClientStructs"
         git push origin csupdate-${{ matrix.branches }} --force
-    - name: Create PR
-      run: |
         echo ${{ secrets.UPDATE_PAT }} | gh auth login --with-token
         prNumber=$(gh pr list --base ${{ matrix.branches }} --head csupdate-${{ matrix.branches }} --state open --json number --template "{{range .}}{{.number}}{{end}}")
         if [ -z "$prNumber" ]; then
