@@ -24,6 +24,8 @@ jobs:
           path: |
             **/obj/**/*.obj
             **/obj/**/*.pdb
+            **/obj/**/*.iobj
+            **/obj/**/*.ipdb
             **/obj/**/*.recipe
           key: ${{ runner.os }}-cpp-${{ github.sha }}
           restore-keys: |
