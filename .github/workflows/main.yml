@@ -25,14 +25,14 @@ jobs:
             **/obj/**/*.obj
             **/obj/**/*.pdb
             **/obj/**/*.recipe
-          key: ${{ runner.os }}-cpp-${{ hashFiles('**/packages.lock.json') }}
+          key: ${{ runner.os }}-cpp-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-cpp-
       - name: Cache NuGet packages
         uses: actions/cache@v4
         with:
           path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          key: ${{ runner.os }}-nuget-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-nuget-
       - name: Setup MSBuild
