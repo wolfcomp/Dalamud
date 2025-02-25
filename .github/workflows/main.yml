@@ -20,6 +20,8 @@ jobs:
           fetch-depth: 0
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.0.2
+      - name: Setup MSVC commands
+        uses: ilammy/msvc-dev-cmd@v1
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.100'
@@ -32,30 +34,43 @@ jobs:
           ($env:REPO_NAME) >> VERSION
           ($env:BRANCH) >> VERSION
           ($env:COMMIT) >> VERSION
-      - name: Build Dalamud
-        run: .\build.ps1 compile
+      - name: Compile C++ components
+        run: |
+          msbuild .\external\cimgui\cimgui.vcxproj /p:Platform=x64 /p:Configuration=Release
+          msbuild .\external\cimplot\cimplot.vcxproj /p:Platform=x64 /p:Configuration=Release
+          msbuild .\external\cimgizmo\cimgizmo.vcxproj /p:Platform=x64 /p:Configuration=Release
+          msbuild .\Dalamud.Injector.Boot\Dalamud.Injector.Boot.vcxproj /p:Configuration=Release
+          msbuild .\Dalamud.Boot\Dalamud.Boot.vcxproj /p:Configuration=Release
+          msbuild .\Dalamud.CrashHandler\Dalamud.CrashHandler.vcxproj /p:Configuration=Release
+      - name: Restore C# components
+        run: |
+          dotnet restore .\Dalamud.sln
+      - name: Compile C# components
+        run: |
+          dotnet build .\Dalamud.Injector\Dalamud.Injector.csproj --configuration Release --no-restore
+          dotnet build .\Dalamud\Dalamud.csproj --configuration Release --no-restore
       - name: Test Dalamud
-        run: .\build.ps1 test
-      - name: Sign Dalamud
-        if: ${{ github.repository_owner == 'goatcorp' && github.event_name == 'push' }}
-        env:
-          CODESIGN_CERT_PFX: ${{ secrets.CODESIGN_CERT_PFX }}
-          CODESIGN_CERT_PASSWORD: ${{ secrets.CODESIGN_CERT_PASSWORD }}
-        run: .\sign.ps1 .\bin\Release
-      - name: Create hashlist
-        run: .\CreateHashList.ps1 .\bin\Release
-      - name: Attest Build
-        if: ${{ github.repository_owner == 'goatcorp' && github.event_name == 'push' }}
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-path: |
-            bin/Release/hashes.json
-            bin/Release/Dalamud.dll
-            bin/Release/DalamudCrashHandler.exe
-            bin/Release/Dalamud.*.dll
-            bin/Release/Dalamud.*.exe
-            bin/Release/FFXIVClientStructs.dll
-            bin/Release/cim*.dll
+        run: dotnet test .\Dalamud.Tests\Dalamud.Tests.csproj --configuration Release --no-restore
+      # - name: Sign Dalamud
+      #   if: ${{ github.repository_owner == 'goatcorp' && github.event_name == 'push' }}
+      #   env:
+      #     CODESIGN_CERT_PFX: ${{ secrets.CODESIGN_CERT_PFX }}
+      #     CODESIGN_CERT_PASSWORD: ${{ secrets.CODESIGN_CERT_PASSWORD }}
+      #   run: .\sign.ps1 .\bin\Release
+      # - name: Create hashlist
+      #   run: .\CreateHashList.ps1 .\bin\Release
+      # - name: Attest Build
+      #   if: ${{ github.repository_owner == 'goatcorp' && github.event_name == 'push' }}
+      #   uses: actions/attest-build-provenance@v1
+      #   with:
+      #     subject-path: |
+      #       bin/Release/hashes.json
+      #       bin/Release/Dalamud.dll
+      #       bin/Release/DalamudCrashHandler.exe
+      #       bin/Release/Dalamud.*.dll
+      #       bin/Release/Dalamud.*.exe
+      #       bin/Release/FFXIVClientStructs.dll
+      #       bin/Release/cim*.dll
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
