@@ -41,7 +41,7 @@ jobs:
           msbuild .\external\cimgizmo\cimgizmo.vcxproj /p:Platform=x64 /p:Configuration=Release
           msbuild .\Dalamud.Injector.Boot\Dalamud.Injector.Boot.vcxproj /p:Configuration=Release
           msbuild .\Dalamud.Boot\Dalamud.Boot.vcxproj /p:Configuration=Release
-          msbuild .\Dalamud.CrashHandler\Dalamud.CrashHandler.vcxproj /p:Configuration=Release
+          msbuild .\DalamudCrashHandler\DalamudCrashHandler.vcxproj /p:Configuration=Release
       - name: Restore C# components
         run: |
           dotnet restore .\Dalamud.sln
