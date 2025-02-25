@@ -50,7 +50,7 @@ jobs:
           dotnet build .\Dalamud.Injector\Dalamud.Injector.csproj --configuration Release --no-restore
           dotnet build .\Dalamud\Dalamud.csproj --configuration Release --no-restore
       - name: Test Dalamud
-        run: dotnet test .\Dalamud.Tests\Dalamud.Tests.csproj --configuration Release --no-restore
+        run: dotnet test .\Dalamud.Test\Dalamud.Test.csproj --configuration Release --no-restore
       # - name: Sign Dalamud
       #   if: ${{ github.repository_owner == 'goatcorp' && github.event_name == 'push' }}
       #   env:
