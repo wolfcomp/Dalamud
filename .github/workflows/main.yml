@@ -68,26 +68,26 @@ jobs:
           dotnet build .\Dalamud\Dalamud.csproj --configuration Release --no-restore
       - name: Test Dalamud
         run: dotnet test .\Dalamud.Test\Dalamud.Test.csproj --configuration Release --no-restore
-      # - name: Sign Dalamud
-      #   if: ${{ github.repository_owner == 'goatcorp' && github.event_name == 'push' }}
-      #   env:
-      #     CODESIGN_CERT_PFX: ${{ secrets.CODESIGN_CERT_PFX }}
-      #     CODESIGN_CERT_PASSWORD: ${{ secrets.CODESIGN_CERT_PASSWORD }}
-      #   run: .\sign.ps1 .\bin\Release
-      # - name: Create hashlist
-      #   run: .\CreateHashList.ps1 .\bin\Release
-      # - name: Attest Build
-      #   if: ${{ github.repository_owner == 'goatcorp' && github.event_name == 'push' }}
-      #   uses: actions/attest-build-provenance@v1
-      #   with:
-      #     subject-path: |
-      #       bin/Release/hashes.json
-      #       bin/Release/Dalamud.dll
-      #       bin/Release/DalamudCrashHandler.exe
-      #       bin/Release/Dalamud.*.dll
-      #       bin/Release/Dalamud.*.exe
-      #       bin/Release/FFXIVClientStructs.dll
-      #       bin/Release/cim*.dll
+      - name: Sign Dalamud
+        if: ${{ github.repository_owner == 'goatcorp' && github.event_name == 'push' }}
+        env:
+          CODESIGN_CERT_PFX: ${{ secrets.CODESIGN_CERT_PFX }}
+          CODESIGN_CERT_PASSWORD: ${{ secrets.CODESIGN_CERT_PASSWORD }}
+        run: .\sign.ps1 .\bin\Release
+      - name: Create hashlist
+        run: .\CreateHashList.ps1 .\bin\Release
+      - name: Attest Build
+        if: ${{ github.repository_owner == 'goatcorp' && github.event_name == 'push' }}
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: |
+            bin/Release/hashes.json
+            bin/Release/Dalamud.dll
+            bin/Release/DalamudCrashHandler.exe
+            bin/Release/Dalamud.*.dll
+            bin/Release/Dalamud.*.exe
+            bin/Release/FFXIVClientStructs.dll
+            bin/Release/cim*.dll
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
