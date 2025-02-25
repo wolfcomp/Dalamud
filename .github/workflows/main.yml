@@ -20,8 +20,6 @@ jobs:
           fetch-depth: 0
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.0.2
-      - name: Setup MSVC commands
-        uses: ilammy/msvc-dev-cmd@v1
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.100'
@@ -34,6 +32,11 @@ jobs:
           ($env:REPO_NAME) >> VERSION
           ($env:BRANCH) >> VERSION
           ($env:COMMIT) >> VERSION
+      - name: Restore Solution
+        run: |
+          dotnet restore .\Dalamud.sln
+      - name: Setup MSVC commands
+        uses: ilammy/msvc-dev-cmd@v1
       - name: Compile C++ components
         run: |
           msbuild .\external\cimgui\cimgui.vcxproj /p:Platform=x64 /p:Configuration=Release
@@ -42,9 +45,6 @@ jobs:
           msbuild .\Dalamud.Injector.Boot\Dalamud.Injector.Boot.vcxproj /p:Configuration=Release
           msbuild .\Dalamud.Boot\Dalamud.Boot.vcxproj /p:Configuration=Release
           msbuild .\DalamudCrashHandler\DalamudCrashHandler.vcxproj /p:Configuration=Release
-      - name: Restore C# components
-        run: |
-          dotnet restore .\Dalamud.sln
       - name: Compile C# components
         run: |
           dotnet build .\Dalamud.Injector\Dalamud.Injector.csproj --configuration Release --no-restore
