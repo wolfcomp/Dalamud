@@ -18,18 +18,14 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
-      - name: Cache OBJ files
+      - name: Cache obj folder files
         uses: actions/cache@v4
         with:
           path: |
-            **/obj/**/*.obj
-            **/obj/**/*.pdb
-            **/obj/**/*.iobj
-            **/obj/**/*.ipdb
-            **/obj/**/*.recipe
-          key: ${{ runner.os }}-cpp-${{ github.sha }}
+            **/obj/**/*.*
+          key: ${{ runner.os }}-build-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-cpp-
+            ${{ runner.os }}-build-
       - name: Cache NuGet packages
         uses: actions/cache@v4
         with:
@@ -37,14 +33,6 @@ jobs:
           key: ${{ runner.os }}-nuget-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-nuget-
-      - name: Cache dotnet build files
-        uses: actions/cache@v4
-        with:
-          path: |
-            **/obj/**/*.*
-          key: ${{ runner.os }}-dotnet-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-dotnet-
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
       - uses: actions/setup-dotnet@v3
