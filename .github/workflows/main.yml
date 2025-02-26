@@ -26,6 +26,9 @@ jobs:
           key: ${{ runner.os }}-build-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-build-
+      - name: Check cached obj folder files
+        run: |
+          ls -R ./**/obj
       - name: Cache NuGet packages
         uses: actions/cache@v4
         with:
