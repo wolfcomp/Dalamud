@@ -26,13 +26,13 @@ jobs:
           key: ${{ runner.os }}-build-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-build-
-      # - name: Cache NuGet packages
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: ~/.nuget/packages
-      #     key: ${{ runner.os }}-nuget-${{ github.sha }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-nuget-
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
       - uses: actions/setup-dotnet@v3
