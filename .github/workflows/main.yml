@@ -18,14 +18,14 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
-      # - name: Cache obj folder files
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: |
-      #       **/obj
-      #     key: ${{ runner.os }}-build-${{ github.sha }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-build-
+      - name: Cache obj folder files
+        uses: actions/cache@v4
+        with:
+          path: |
+            **/obj
+          key: ${{ runner.os }}-build-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-build-
       # - name: Cache NuGet packages
       #   uses: actions/cache@v4
       #   with:
@@ -35,34 +35,36 @@ jobs:
       #       ${{ runner.os }}-nuget-
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
-      - name: tmp
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.100'
+      - name: Define VERSION
         run: |
-          Get-ChildItem env:
-      # - uses: actions/setup-dotnet@v3
-      #   with:
-      #     dotnet-version: '8.0.100'
-      # - name: Define VERSION
-      #   run: |
-      #     $env:COMMIT = $env:GITHUB_SHA.Substring(0, 7)
-      #     $env:REPO_NAME = $env:GITHUB_REPOSITORY -replace '.*/'
-      #     $env:BRANCH = $env:GITHUB_REF -replace '.*/'
+          $env:COMMIT = $env:GITHUB_SHA.Substring(0, 7)
+          $env:REPO_NAME = $env:GITHUB_REPOSITORY -replace '.*/'
+          $env:BRANCH = $env:GITHUB_REF -replace '.*/'
 
-      #     ($env:REPO_NAME) >> VERSION
-      #     ($env:BRANCH) >> VERSION
-      #     ($env:COMMIT) >> VERSION
-      # - name: Restore Solution
-      #   run: |
-      #     dotnet restore .\Dalamud.sln
-      # - name: Setup MSVC commands
-      #   uses: ilammy/msvc-dev-cmd@v1
-      # - name: Compile C++ components
-      #   run: |
-      #     msbuild .\external\cimgui\cimgui.vcxproj /p:Platform=x64 /p:Configuration=Release
-      #     msbuild .\external\cimplot\cimplot.vcxproj /p:Platform=x64 /p:Configuration=Release
-      #     msbuild .\external\cimgizmo\cimgizmo.vcxproj /p:Platform=x64 /p:Configuration=Release
-      #     msbuild .\Dalamud.Injector.Boot\Dalamud.Injector.Boot.vcxproj /p:Configuration=Release
-      #     msbuild .\Dalamud.Boot\Dalamud.Boot.vcxproj /p:Configuration=Release
-      #     msbuild .\DalamudCrashHandler\DalamudCrashHandler.vcxproj /p:Configuration=Release
+          ($env:REPO_NAME) >> VERSION
+          ($env:BRANCH) >> VERSION
+          ($env:COMMIT) >> VERSION
+      - name: Restore Solution
+        run: |
+          dotnet restore .\Dalamud.sln
+      - name: Setup MSVC commands
+        uses: ilammy/msvc-dev-cmd@v1
+      - name: Enter VS Development Command Prompt
+        run: |
+          $vspath = vswhere -products * -requires Microsoft.Component.MSBuild -property installationPath -latest
+          Import-Module (Join-Path $vspath 'Common7\Tools\Microsoft.VisualStudio.DevShell.dll')
+          Enter-VsDevShell -VsInstallPath $vspath
+      - name: Compile C++ components
+        run: |
+          msbuild .\external\cimgui\cimgui.vcxproj /p:Platform=x64 /p:Configuration=Release
+          msbuild .\external\cimplot\cimplot.vcxproj /p:Platform=x64 /p:Configuration=Release
+          msbuild .\external\cimgizmo\cimgizmo.vcxproj /p:Platform=x64 /p:Configuration=Release
+          msbuild .\Dalamud.Injector.Boot\Dalamud.Injector.Boot.vcxproj /p:Configuration=Release
+          msbuild .\Dalamud.Boot\Dalamud.Boot.vcxproj /p:Configuration=Release
+          msbuild .\DalamudCrashHandler\DalamudCrashHandler.vcxproj /p:Configuration=Release
       # - name: Compile C# components
       #   run: |
       #     dotnet build .\Dalamud.Injector\Dalamud.Injector.csproj --configuration Release --no-restore
