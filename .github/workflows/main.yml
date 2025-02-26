@@ -64,12 +64,12 @@ jobs:
           Enter-VsDevShell -VsInstallPath $vspath
       - name: Compile C++ components
         run: |
-          ccache msbuild .\external\cimgui\cimgui.vcxproj /p:Platform=x64 /p:Configuration=Release /p:UseMultiToolTask=true
-          ccache msbuild .\external\cimplot\cimplot.vcxproj /p:Platform=x64 /p:Configuration=Release /p:UseMultiToolTask=true
-          ccache msbuild .\external\cimgizmo\cimgizmo.vcxproj /p:Platform=x64 /p:Configuration=Release /p:UseMultiToolTask=true
-          ccache msbuild .\Dalamud.Injector.Boot\Dalamud.Injector.Boot.vcxproj /p:Configuration=Release /p:UseMultiToolTask=true
-          ccache msbuild .\Dalamud.Boot\Dalamud.Boot.vcxproj /p:Configuration=Release /p:UseMultiToolTask=true
-          ccache msbuild .\DalamudCrashHandler\DalamudCrashHandler.vcxproj /p:Configuration=Release /p:UseMultiToolTask=true
+          ccache msbuild .\external\cimgui\cimgui.vcxproj /p:Platform=x64 /p:Configuration=Release /p:UseMultiToolTask=true /p:IntDir=..\.ccache\cimgui
+          ccache msbuild .\external\cimplot\cimplot.vcxproj /p:Platform=x64 /p:Configuration=Release /p:UseMultiToolTask=true /p:IntDir=..\.ccache\cimplot
+          ccache msbuild .\external\cimgizmo\cimgizmo.vcxproj /p:Platform=x64 /p:Configuration=Release /p:UseMultiToolTask=true /p:IntDir=..\.ccache\cimgizmo
+          ccache msbuild .\Dalamud.Injector.Boot\Dalamud.Injector.Boot.vcxproj /p:Configuration=Release /p:UseMultiToolTask=true /p:IntDir=..\.ccache\Dalamud.Injector.Boot
+          ccache msbuild .\Dalamud.Boot\Dalamud.Boot.vcxproj /p:Configuration=Release /p:UseMultiToolTask=true /p:IntDir=..\.ccache\Dalamud.Boot
+          ccache msbuild .\DalamudCrashHandler\DalamudCrashHandler.vcxproj /p:Configuration=Release /p:UseMultiToolTask=true /p:IntDir=..\.ccache\DalamudCrashHandler
       - name: Compile C# components
         run: |
           dotnet build .\Dalamud.Injector\Dalamud.Injector.csproj --configuration Release --no-restore
