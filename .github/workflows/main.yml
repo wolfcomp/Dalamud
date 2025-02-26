@@ -50,8 +50,6 @@ jobs:
       - name: Restore Solution
         run: |
           dotnet restore .\Dalamud.sln
-      - name: Setup MSVC commands
-        uses: ilammy/msvc-dev-cmd@v1
       - name: Enter VS Development Command Prompt
         run: |
           $vspath = vswhere -products * -requires Microsoft.Component.MSBuild -property installationPath -latest
