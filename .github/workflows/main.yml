@@ -25,9 +25,12 @@ jobs:
         with:
           path: |
             **/obj
+            **/bin
           key: ${{ runner.os }}-build-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-build-
+      - name: Remove main bin folder
+        run: Remove-Item -Recurse -Force .\bin
       - name: Cache NuGet packages
         uses: actions/cache@v4
         with:
