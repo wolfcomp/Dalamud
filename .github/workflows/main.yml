@@ -61,12 +61,12 @@ jobs:
           Enter-VsDevShell -VsInstallPath $vspath
       - name: Compile C++ components
         run: |
-          msbuild .\external\cimgui\cimgui.vcxproj /p:Platform=x64 /p:Configuration=Release /p:UseMultiToolTask=true /p:CLToolPath=C:\ProgramData\chocolatey\bin
-          msbuild .\external\cimplot\cimplot.vcxproj /p:Platform=x64 /p:Configuration=Release /p:UseMultiToolTask=true /p:CLToolPath=C:\ProgramData\chocolatey\bin
-          msbuild .\external\cimgizmo\cimgizmo.vcxproj /p:Platform=x64 /p:Configuration=Release /p:UseMultiToolTask=true /p:CLToolPath=C:\ProgramData\chocolatey\bin
-          msbuild .\Dalamud.Injector.Boot\Dalamud.Injector.Boot.vcxproj /p:Configuration=Release /p:UseMultiToolTask=true /p:CLToolPath=C:\ProgramData\chocolatey\bin
-          msbuild .\Dalamud.Boot\Dalamud.Boot.vcxproj /p:Configuration=Release /p:UseMultiToolTask=true /p:CLToolPath=C:\ProgramData\chocolatey\bin
-          msbuild .\DalamudCrashHandler\DalamudCrashHandler.vcxproj /p:Configuration=Release /p:UseMultiToolTask=true /p:CLToolPath=C:\ProgramData\chocolatey\bin
+          ccache msbuild .\external\cimgui\cimgui.vcxproj /p:Platform=x64 /p:Configuration=Release /p:UseMultiToolTask=true
+          ccache msbuild .\external\cimplot\cimplot.vcxproj /p:Platform=x64 /p:Configuration=Release /p:UseMultiToolTask=true
+          ccache msbuild .\external\cimgizmo\cimgizmo.vcxproj /p:Platform=x64 /p:Configuration=Release /p:UseMultiToolTask=true
+          ccache msbuild .\Dalamud.Injector.Boot\Dalamud.Injector.Boot.vcxproj /p:Configuration=Release /p:UseMultiToolTask=true
+          ccache msbuild .\Dalamud.Boot\Dalamud.Boot.vcxproj /p:Configuration=Release /p:UseMultiToolTask=true
+          ccache msbuild .\DalamudCrashHandler\DalamudCrashHandler.vcxproj /p:Configuration=Release /p:UseMultiToolTask=true
       - name: Compile C# components
         run: |
           dotnet build .\Dalamud.Injector\Dalamud.Injector.csproj --configuration Release --no-restore
