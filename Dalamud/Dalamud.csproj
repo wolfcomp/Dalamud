@@ -65,6 +65,9 @@
         <PackageReference Include="CheapLoc" />
         <PackageReference Include="DotNet.ReproducibleBuilds" PrivateAssets="all" />
         <PackageReference Include="goatcorp.Reloaded.Hooks" />
+        <PackageReference Include="Hexa.NET.ImGui" />
+        <PackageReference Include="Hexa.NET.ImGuizmo" />
+        <PackageReference Include="Hexa.NET.ImPlot" />
         <PackageReference Include="JetBrains.Annotations" />
         <PackageReference Include="Lumina" />
         <PackageReference Include="Microsoft.Extensions.ObjectPool" />
@@ -88,11 +91,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\generators\Dalamud.EnumGenerator\Dalamud.EnumGenerator\Dalamud.EnumGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+        <ProjectReference Include="..\generators\Dalamud.EnumGenerator\Dalamud.EnumGenerator\Dalamud.EnumGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="EnumCloneMap.txt"/>
+        <None Remove="EnumCloneMap.txt" />
         <AdditionalFiles Include="EnumCloneMap.txt" />
     </ItemGroup>
 
@@ -107,9 +110,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Dalamud.Common\Dalamud.Common.csproj" />
-        <ProjectReference Include="..\imgui\Dalamud.Bindings.ImGuizmo\Dalamud.Bindings.ImGuizmo.csproj" />
-        <ProjectReference Include="..\imgui\Dalamud.Bindings.ImGui\Dalamud.Bindings.ImGui.csproj" />
-        <ProjectReference Include="..\imgui\Dalamud.Bindings.ImPlot\Dalamud.Bindings.ImPlot.csproj" />
         <ProjectReference Include="..\imgui\ImGuiScene\ImGuiScene.csproj" />
         <ProjectReference Include="..\lib\FFXIVClientStructs\FFXIVClientStructs\FFXIVClientStructs.csproj" />
         <ProjectReference Include="..\lib\FFXIVClientStructs\InteropGenerator.Runtime\InteropGenerator.Runtime.csproj" />

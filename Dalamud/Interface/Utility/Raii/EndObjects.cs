@@ -1,12 +1,12 @@
 using System.Numerics;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 
 namespace Dalamud.Interface.Utility.Raii;
 
 // Most ImGui widgets with IDisposable interface that automatically destroys them
 // when created with using variables.
-public static partial class ImRaii
+public static unsafe partial class ImRaii
 {
     private static int disabledCount = 0;
 
@@ -16,11 +16,11 @@ public static partial class ImRaii
     public static IEndObject Child(ImU8String strId, Vector2 size)
         => new EndUnconditionally(ImGui.EndChild, ImGui.BeginChild(strId, size));
 
-    public static IEndObject Child(ImU8String strId, Vector2 size, bool border)
-        => new EndUnconditionally(ImGui.EndChild, ImGui.BeginChild(strId, size, border));
+    public static IEndObject Child(ImU8String strId, Vector2 size, ImGuiChildFlags childFlags)
+        => new EndUnconditionally(ImGui.EndChild, ImGui.BeginChild(strId, size, childFlags));
 
-    public static IEndObject Child(ImU8String strId, Vector2 size, bool border, ImGuiWindowFlags flags)
-        => new EndUnconditionally(ImGui.EndChild, ImGui.BeginChild(strId, size, border, flags));
+    public static IEndObject Child(ImU8String strId, Vector2 size, ImGuiChildFlags childFlags, ImGuiWindowFlags flags)
+        => new EndUnconditionally(ImGui.EndChild, ImGui.BeginChild(strId, size, childFlags, flags));
 
     public static IEndObject DragDropTarget()
         => new EndConditionally(ImGui.EndDragDropTarget, ImGui.BeginDragDropTarget());

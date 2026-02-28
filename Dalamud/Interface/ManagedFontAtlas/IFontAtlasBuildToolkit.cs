@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Utility;
 
 namespace Dalamud.Interface.ManagedFontAtlas;

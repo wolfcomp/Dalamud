@@ -78,7 +78,7 @@ internal class AssertHandler : IDisposable
     private static string? ExtractImguiFunction(StackTrace stackTrace)
     {
         var frame = stackTrace.GetFrames()
-                              .FirstOrDefault(f => f.GetMethod()?.DeclaringType?.Namespace == "Dalamud.Bindings.ImGui");
+                              .FirstOrDefault(f => f.GetMethod()?.DeclaringType?.Namespace == "Hexa.NET.ImGui");
         if (frame == null)
             return null;
 

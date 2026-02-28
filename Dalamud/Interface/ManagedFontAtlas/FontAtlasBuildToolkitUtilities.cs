@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text.Unicode;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 
 namespace Dalamud.Interface.ManagedFontAtlas;
 
@@ -91,9 +91,9 @@ public static class FontAtlasBuildToolkitUtilities
     /// <returns>The relevant config pointer, or empty config pointer if not found.</returns>
     public static unsafe ImFontConfigPtr FindConfigPtr(this IFontAtlasBuildToolkit toolkit, ImFontPtr fontPtr)
     {
-        for (var i = 0; i < toolkit.NewImAtlas.ConfigData.Size; i++)
+        for (var i = 0; i < toolkit.NewImAtlas.Sources.Size; i++)
         {
-            var c = toolkit.NewImAtlas.ConfigData[i];
+            var c = toolkit.NewImAtlas.Sources[i];
             if (c.DstFont == fontPtr.Handle)
                 return new((ImFontConfig*)Unsafe.AsPointer(ref c));
         }

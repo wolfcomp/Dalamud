@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 
 namespace Dalamud.Interface.Internal.UiDebug.Browsing;
 

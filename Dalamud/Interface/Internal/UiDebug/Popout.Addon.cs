@@ -1,6 +1,6 @@
 using System.Numerics;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Internal.UiDebug.Browsing;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
@@ -39,7 +39,7 @@ internal class AddonPopoutWindow : Window, IDisposable
     /// <inheritdoc/>
     public override void Draw()
     {
-        using var ch = ImRaii.Child($"{this.WindowName}child", Vector2.Zero, true);
+        using var ch = ImRaii.Child($"{this.WindowName}child", Vector2.Zero, ImGuiChildFlags.Borders);
         if (ch.Success)
         {
             this.addonTree.Draw();

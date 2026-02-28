@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Game;
 using Dalamud.Interface.Internal;
 using Dalamud.Interface.Textures.Internal;
@@ -57,7 +57,7 @@ internal sealed class ViewportTextureWrap : IDalamudTextureWrap, IDeferredDispos
         get
         {
             var t = (nint)this.srv.Get();
-            return t == nint.Zero ? Service<DalamudAssetManager>.Get().Empty4X4.Handle : new ImTextureID(this.srv.Get());
+            return t == nint.Zero ? Service<DalamudAssetManager>.Get().Empty4X4.Handle : new ImTextureID((nint)this.srv.Get());
         }
     }
 

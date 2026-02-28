@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Threading;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Configuration.Internal;
 using Dalamud.Game;
 using Dalamud.Game.Gui.Dtr;

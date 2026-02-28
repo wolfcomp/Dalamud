@@ -1,6 +1,8 @@
 using System.Numerics;
 
-using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
+
+using Hexa.NET.ImGui;
 
 namespace Dalamud.Interface.Textures.TextureWraps.Internal;
 
@@ -8,7 +10,7 @@ namespace Dalamud.Interface.Textures.TextureWraps.Internal;
 internal sealed unsafe partial class DrawListTextureWrap
 {
     /// <inheritdoc/>
-    public void ResizeAndDrawWindow(ReadOnlySpan<char> windowName, Vector2 scale)
+    public void ResizeAndDrawWindow(ReadOnlySpan<byte> windowName, Vector2 scale)
     {
         var window = ImGuiP.FindWindowByName(windowName);
         if (window.IsNull)
@@ -17,7 +19,8 @@ internal sealed unsafe partial class DrawListTextureWrap
         this.Size = window.Size;
 
         var numDrawList = CountDrawList(window);
-        var drawLists = stackalloc ImDrawList*[numDrawList];
+        var drawListsAlloc = stackalloc ImDrawListPtr[numDrawList];
+        var drawLists = new ImVector<ImDrawListPtr>(numDrawList, numDrawList, drawListsAlloc);
         var drawData = new ImDrawData
         {
             Valid = 1,
@@ -32,8 +35,8 @@ internal sealed unsafe partial class DrawListTextureWrap
         AddWindowToDrawData(window, ref drawLists);
         for (var i = 0; i < numDrawList; i++)
         {
-            drawData.TotalVtxCount += drawData.CmdLists[i]->VtxBuffer.Size;
-            drawData.TotalIdxCount += drawData.CmdLists[i]->IdxBuffer.Size;
+            drawData.TotalVtxCount += drawData.CmdLists[i].VtxBuffer.Size;
+            drawData.TotalIdxCount += drawData.CmdLists[i].IdxBuffer.Size;
         }
 
         this.Draw(drawData);
@@ -42,7 +45,7 @@ internal sealed unsafe partial class DrawListTextureWrap
 
         static bool IsWindowActiveAndVisible(ImGuiWindowPtr window) => window is { Active: true, Hidden: false };
 
-        static void AddWindowToDrawData(ImGuiWindowPtr window, ref ImDrawList** wptr)
+        static void AddWindowToDrawData(ImGuiWindowPtr window, ref ImVector<ImDrawListPtr> wptr)
         {
             switch (window.DrawList.CmdBuffer.Size)
             {
@@ -51,7 +54,7 @@ internal sealed unsafe partial class DrawListTextureWrap
                             window.DrawList.CmdBuffer[0].UserCallback == null:
                     break;
                 default:
-                    *wptr++ = window.DrawList;
+                    *wptr.Data = window.DrawList;
                     break;
             }
 

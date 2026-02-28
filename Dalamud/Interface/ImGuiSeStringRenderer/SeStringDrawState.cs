@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.ImGuiSeStringRenderer.Internal;
 using Dalamud.Interface.Utility;
 
@@ -267,7 +267,7 @@ public unsafe ref struct SeStringDrawState : IDisposable
     /// <param name="offset">Offset of the glyph in pixels w.r.t. <see cref="ScreenOffset"/>.</param>
     internal void DrawGlyph(scoped in ImGuiHelpers.ImFontGlyphReal g, Vector2 offset)
     {
-        var texId = this.Font.ContainerAtlas.Textures.Ref<ImFontAtlasTexture>(g.TextureIndex).TexID;
+        var texId = this.Font.ContainerAtlas.TexID;
         var xy0 = new Vector2(
             MathF.Round(g.X0 * this.FontSizeScale),
             MathF.Round(g.Y0 * this.FontSizeScale));

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.FontIdentifier;
 using Dalamud.Interface.GameFonts;
 using Dalamud.Interface.Utility;

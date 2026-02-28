@@ -1,6 +1,6 @@
 using System.Numerics;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Game.ClientState.GamePad;
 
 namespace Dalamud.Plugin.Services;

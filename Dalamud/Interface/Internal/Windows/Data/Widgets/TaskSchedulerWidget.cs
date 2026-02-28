@@ -7,7 +7,8 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
+
 using Dalamud.Game;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
@@ -243,8 +244,8 @@ internal class TaskSchedulerWidget : IDataWindowWidget
 
         if (ImGui.CollapsingHeader("Download"u8))
         {
-            ImGui.InputText("URL"u8, ref this.url);
-            ImGui.InputText("Local Path"u8, ref this.localPath);
+            ImGui.InputText("URL"u8, ref this.url, (uint)this.url.Length);
+            ImGui.InputText("Local Path"u8, ref this.localPath, (uint)this.localPath.Length);
             ImGui.SameLine();
 
             if (ImGuiComponents.IconButton("##localpathpicker", FontAwesomeIcon.File))

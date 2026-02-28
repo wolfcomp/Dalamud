@@ -4,7 +4,7 @@ using System.Numerics;
 
 using CheapLoc;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Configuration.Internal;
 using Dalamud.Game;
 using Dalamud.Game.Gui;
@@ -255,7 +255,7 @@ internal sealed class ChangelogWindow : Window, IDisposable
         ImGui.SameLine();
 
         var logoContainerSize = new Vector2(windowSize.X * 0.2f - dummySize, windowSize.Y);
-        using (var child = ImRaii.Child("###logoContainer"u8, logoContainerSize, false))
+        using (var child = ImRaii.Child("###logoContainer"u8, logoContainerSize, ImGuiChildFlags.None))
         {
             if (!child)
                 return;
@@ -273,7 +273,7 @@ internal sealed class ChangelogWindow : Window, IDisposable
         ImGui.Dummy(new Vector2(dummySize));
         ImGui.SameLine();
 
-        using (var child = ImRaii.Child("###textContainer"u8, new Vector2((windowSize.X * 0.8f) - dummySize * 4, windowSize.Y), false))
+        using (var child = ImRaii.Child("###textContainer"u8, new Vector2((windowSize.X * 0.8f) - dummySize * 4, windowSize.Y), ImGuiChildFlags.None))
         {
             if (!child)
                 return;
@@ -400,15 +400,15 @@ internal sealed class ChangelogWindow : Window, IDisposable
                         break;
 
                     case State.AskAutoUpdate:
-                        ImGui.TextColoredWrapped(ImGuiColors.DalamudWhite, Loc.Localize("DalamudSettingsAutoUpdateHint",
+                        ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudWhite, Loc.Localize("DalamudSettingsAutoUpdateHint",
                                                 "Dalamud can update your plugins automatically, making sure that you always " +
                                                 "have the newest features and bug fixes. You can choose when and how auto-updates are run here."));
                         ImGuiHelpers.ScaledDummy(2);
 
-                        ImGui.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingsAutoUpdateDisclaimer1",
+                        ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingsAutoUpdateDisclaimer1",
                                                                 "You can always update your plugins manually by clicking the update button in the plugin list. " +
                                                                 "You can also opt into updates for specific plugins by right-clicking them and selecting \"Always auto-update\"."));
-                        ImGui.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingsAutoUpdateDisclaimer2",
+                        ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingsAutoUpdateDisclaimer2",
                                                                 "Dalamud will only notify you about updates while you are idle."));
 
                         ImGuiHelpers.ScaledDummy(15);

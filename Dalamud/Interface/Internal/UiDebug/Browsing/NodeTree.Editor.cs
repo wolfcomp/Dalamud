@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Internal.UiDebug.Utility;
 using Dalamud.Interface.Utility.Raii;
@@ -10,10 +10,10 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 
 using Lumina.Text.ReadOnly;
 
-using static Dalamud.Bindings.ImGui.ImGuiColorEditFlags;
-using static Dalamud.Bindings.ImGui.ImGuiInputTextFlags;
-using static Dalamud.Bindings.ImGui.ImGuiTableColumnFlags;
-using static Dalamud.Bindings.ImGui.ImGuiTableFlags;
+using static Hexa.NET.ImGui.ImGuiColorEditFlags;
+using static Hexa.NET.ImGui.ImGuiInputTextFlags;
+using static Hexa.NET.ImGui.ImGuiTableColumnFlags;
+using static Hexa.NET.ImGui.ImGuiTableFlags;
 using static Dalamud.Interface.ColorHelpers;
 using static Dalamud.Interface.FontAwesomeIcon;
 using static Dalamud.Interface.Internal.UiDebug.Utility.Gui;
@@ -312,7 +312,7 @@ internal unsafe partial class TextNodeTree
         ImGui.TableNextColumn();
         ImGui.Text("Text:"u8);
         ImGui.TableNextColumn();
-        ImGui.SetNextItemWidth(Math.Max(ImGui.GetWindowContentRegionMax().X - ImGui.GetCursorPosX() - 50f, 150));
+        ImGui.SetNextItemWidth(Math.Max(ImGui.GetContentRegionAvail().X - 50f, 150));
         if (ImGui.InputText($"##{(nint)this.Node:X}textEdit", ref text, 512, EnterReturnsTrue))
         {
             this.TxtNode->SetText(text);
@@ -323,7 +323,7 @@ internal unsafe partial class TextNodeTree
         ImGui.Text("Font:"u8);
         ImGui.TableNextColumn();
         ImGui.SetNextItemWidth(150);
-        if (ImGui.Combo($"##{(nint)this.Node:X}fontType", ref fontIndex, FontNames))
+        if (ImGui.Combo($"##{(nint)this.Node:X}fontType", ref fontIndex, FontNames, FontNames.Length))
         {
             this.TxtNode->FontType = FontList[fontIndex];
         }

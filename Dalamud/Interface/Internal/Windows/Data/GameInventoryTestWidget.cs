@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Configuration.Internal;
 using Dalamud.Game.Inventory;
 using Dalamud.Game.Inventory.InventoryEventArgTypes;
 using Dalamud.Interface.Colors;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Logging.Internal;
 
@@ -40,7 +41,7 @@ internal class GameInventoryTestWidget : IDataWindowWidget
     {
         if (Service<DalamudConfiguration>.Get().LogLevel > LogEventLevel.Information)
         {
-            ImGui.TextColoredWrapped(
+            ImGuiHelpers.TextColoredWrapped(
                 ImGuiColors.DalamudRed,
                 "Enable LogLevel=Information display to see the logs."u8);
         }

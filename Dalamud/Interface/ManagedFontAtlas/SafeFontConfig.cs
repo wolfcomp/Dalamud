@@ -1,8 +1,8 @@
-﻿using System.Numerics;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 
 namespace Dalamud.Interface.ManagedFontAtlas;
 
@@ -119,8 +119,8 @@ public struct SafeFontConfig
     /// </summary>
     public Vector2 GlyphExtraSpacing
     {
-        get => this.Raw.GlyphExtraSpacing;
-        set => this.Raw.GlyphExtraSpacing = new(
+        get => this.Raw.GlyphOffset;
+        set => this.Raw.GlyphOffset = new(
                    EnsureRange(value.X, float.MinValue, float.MaxValue),
                    EnsureRange(value.Y, float.MinValue, float.MaxValue));
     }
@@ -192,8 +192,8 @@ public struct SafeFontConfig
     /// </summary>
     public float RasterizerGamma
     {
-        get => this.Raw.RasterizerGamma;
-        set => this.Raw.RasterizerGamma = EnsureRange(value, float.Epsilon, float.MaxValue);
+        get => this.Raw.RasterizerDensity;
+        set => this.Raw.RasterizerDensity = EnsureRange(value, float.Epsilon, float.MaxValue);
     }
 
     /// <summary>
@@ -273,7 +273,7 @@ public struct SafeFontConfig
         if (!(this.Raw.RasterizerMultiply > 0))
             throw new ArgumentException($"{nameof(this.RasterizerMultiply)} must be a positive number.");
 
-        if (!(this.Raw.RasterizerGamma > 0))
+        if (!(this.Raw.RasterizerDensity > 0))
             throw new ArgumentException($"{nameof(this.RasterizerGamma)} must be a positive number.");
 
         if (this.GlyphRanges is { Length: > 0 } ranges)

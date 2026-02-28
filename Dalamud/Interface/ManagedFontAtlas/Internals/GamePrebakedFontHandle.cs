@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reactive.Disposables;
 using System.Threading;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Game.Text;
 using Dalamud.Interface.GameFonts;
 using Dalamud.Interface.Textures.TextureWraps;
@@ -366,42 +366,43 @@ internal class GamePrebakedFontHandle : FontHandle
         /// <inheritdoc/>
         public unsafe void OnPostBuild(IFontAtlasBuildToolkitPostBuild toolkitPostBuild)
         {
-            var allTextureIndices = new Dictionary<string, int[]>();
-            var allTexFiles = new Dictionary<string, TexFile[]>();
-            using var rentReturn = Disposable.Create(
-                () =>
-                {
-                    foreach (var x in allTextureIndices.Values)
-                        ArrayPool<int>.Shared.Return(x);
-                    foreach (var x in allTexFiles.Values)
-                        ArrayPool<TexFile>.Shared.Return(x);
-                });
-
-            var pixels8Array = new byte*[toolkitPostBuild.NewImAtlas.Textures.Size];
-            var widths = new int[toolkitPostBuild.NewImAtlas.Textures.Size];
-            for (var i = 0; i < pixels8Array.Length; i++)
-            {
-                var width = 0;
-                toolkitPostBuild.NewImAtlas.GetTexDataAsAlpha8(i, ref pixels8Array[i], ref widths[i], ref width);
-            }
-
-            foreach (var (style, plan) in this.fonts)
-            {
-                try
-                {
-                    foreach (var font in plan.Ranges.Keys)
-                        this.PatchFontMetricsIfNecessary(style, font, toolkitPostBuild.Scale);
-
-                    plan.SetFullRangeFontGlyphs(toolkitPostBuild, allTexFiles, allTextureIndices, pixels8Array, widths);
-                    plan.CopyGlyphsToRanges(toolkitPostBuild);
-                    plan.PostProcessFullRangeFont(toolkitPostBuild.Scale);
-                }
-                catch (Exception e)
-                {
-                    this.buildExceptions[style] = e;
-                    this.fonts[style] = default;
-                }
-            }
+            // TODO: Kizer fix this for ImGui 1.92 since there is no texture array anymore
+            // var allTextureIndices = new Dictionary<string, int[]>();
+            // var allTexFiles = new Dictionary<string, TexFile[]>();
+            // using var rentReturn = Disposable.Create(
+            //     () =>
+            //     {
+            //         foreach (var x in allTextureIndices.Values)
+            //             ArrayPool<int>.Shared.Return(x);
+            //         foreach (var x in allTexFiles.Values)
+            //             ArrayPool<TexFile>.Shared.Return(x);
+            //     });
+            //
+            // var pixels8Array = new byte*[toolkitPostBuild.NewImAtlas.Textures.Size];
+            // var widths = new int[toolkitPostBuild.NewImAtlas.Textures.Size];
+            // for (var i = 0; i < pixels8Array.Length; i++)
+            // {
+            //     var width = 0;
+            //     toolkitPostBuild.NewImAtlas.GetTexDataAsAlpha8(i, ref pixels8Array[i], ref widths[i], ref width);
+            // }
+            //
+            // foreach (var (style, plan) in this.fonts)
+            // {
+            //     try
+            //     {
+            //         foreach (var font in plan.Ranges.Keys)
+            //             this.PatchFontMetricsIfNecessary(style, font, toolkitPostBuild.Scale);
+            //
+            //         plan.SetFullRangeFontGlyphs(toolkitPostBuild, allTexFiles, allTextureIndices, pixels8Array, widths);
+            //         plan.CopyGlyphsToRanges(toolkitPostBuild);
+            //         plan.PostProcessFullRangeFont(toolkitPostBuild.Scale);
+            //     }
+            //     catch (Exception e)
+            //     {
+            //         this.buildExceptions[style] = e;
+            //         this.fonts[style] = default;
+            //     }
+            // }
         }
 
         /// <summary>

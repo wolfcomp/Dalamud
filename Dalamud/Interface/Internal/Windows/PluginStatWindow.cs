@@ -2,7 +2,7 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Game;
 using Dalamud.Hooking.Internal;
 using Dalamud.Interface.Components;

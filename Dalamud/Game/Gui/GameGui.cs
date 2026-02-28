@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Game.NativeWrapper;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Hooking;

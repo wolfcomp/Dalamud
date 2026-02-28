@@ -1,6 +1,6 @@
 using System.Numerics;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Internal;
 using Dalamud.Interface.Textures.Internal;
 using Dalamud.Plugin.Internal.Types;
@@ -67,7 +67,7 @@ internal sealed unsafe partial class DrawListTextureWrap : IDrawListTextureWrap,
     ~DrawListTextureWrap() => this.RealDispose();
 
     /// <inheritdoc/>
-    public ImTextureID Handle => new(this.srv.Get());
+    public ImTextureID Handle => new((nint)this.srv.Get());
 
     /// <inheritdoc cref="IDrawListTextureWrap.Width"/>
     public int Width
@@ -152,19 +152,21 @@ internal sealed unsafe partial class DrawListTextureWrap : IDrawListTextureWrap,
     }
 
     /// <inheritdoc/>
-    public void Draw(ImDrawListPtr drawListPtr, Vector2 displayPos, Vector2 scale) =>
+    public void Draw(ImVector<ImDrawListPtr> drawListPtr, Vector2 displayPos, Vector2 scale)
+    {
         this.Draw(
             new ImDrawData
             {
                 Valid = 1,
                 CmdListsCount = 1,
-                TotalIdxCount = drawListPtr.IdxBuffer.Size,
-                TotalVtxCount = drawListPtr.VtxBuffer.Size,
-                CmdLists = (ImDrawList**)(&drawListPtr),
+                TotalIdxCount = drawListPtr[0].IdxBuffer.Size,
+                TotalVtxCount = drawListPtr[0].VtxBuffer.Size,
+                CmdLists = drawListPtr,
                 DisplayPos = displayPos,
                 DisplaySize = this.Size,
                 FramebufferScale = scale,
             });
+    }
 
     /// <inheritdoc/>
     public void Draw(scoped in ImDrawData drawData)
@@ -191,7 +193,7 @@ internal sealed unsafe partial class DrawListTextureWrap : IDrawListTextureWrap,
             || drawData.CmdListsCount < 1
             || drawData.TotalIdxCount < 1
             || drawData.TotalVtxCount < 1
-            || drawData.CmdLists.IsNull
+            || drawData.CmdLists.Capacity == 0
             || drawData.DisplaySize.X <= 0
             || drawData.DisplaySize.Y <= 0
             || drawData.FramebufferScale.X == 0

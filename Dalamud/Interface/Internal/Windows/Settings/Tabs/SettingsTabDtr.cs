@@ -5,7 +5,7 @@ using System.Numerics;
 
 using CheapLoc;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Configuration.Internal;
 using Dalamud.Game.Gui.Dtr;
 using Dalamud.Interface.Colors;
@@ -30,7 +30,7 @@ internal sealed class SettingsTabDtr : SettingsTab
 
     public override void Draw()
     {
-        ImGui.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingServerInfoBarHint", "Plugins can put additional information into your server information bar(where world & time can be seen).\nYou can reorder and disable these here."));
+        ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingServerInfoBarHint", "Plugins can put additional information into your server information bar(where world & time can be seen).\nYou can reorder and disable these here."));
 
         ImGuiHelpers.ScaledDummy(10);
 
@@ -44,7 +44,7 @@ internal sealed class SettingsTabDtr : SettingsTab
 
         if (order.Count == 0)
         {
-            ImGui.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingServerInfoBarDidNone", "You have no plugins that use this feature."));
+            ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingServerInfoBarDidNone", "You have no plugins that use this feature."));
         }
 
         var isOrderChange = false;
@@ -137,11 +137,11 @@ internal sealed class SettingsTabDtr : SettingsTab
         ImGuiHelpers.ScaledDummy(10);
 
         ImGui.Text(Loc.Localize("DalamudSettingServerInfoBarSpacing", "Server Info Bar spacing"));
-        ImGui.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingServerInfoBarSpacingHint", "Configure the amount of space between entries in the server info bar here."));
+        ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingServerInfoBarSpacingHint", "Configure the amount of space between entries in the server info bar here."));
         ImGui.SliderInt("Spacing"u8, ref this.dtrSpacing, 0, 40);
 
         ImGui.Text(Loc.Localize("DalamudSettingServerInfoBarDirection", "Server Info Bar direction"));
-        ImGui.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingServerInfoBarDirectionHint", "If checked, the Server Info Bar elements will expand to the right instead of the left."));
+        ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingServerInfoBarDirectionHint", "If checked, the Server Info Bar elements will expand to the right instead of the left."));
         ImGui.Checkbox("Swap Direction"u8, ref this.dtrSwapDirection);
 
         base.Draw();

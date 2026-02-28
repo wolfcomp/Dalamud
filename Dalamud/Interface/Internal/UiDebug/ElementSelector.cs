@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Numerics;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Internal.UiDebug.Browsing;
 using Dalamud.Interface.Internal.UiDebug.Utility;
@@ -13,8 +13,8 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 
 using static System.Globalization.NumberFormatInfo;
 
-using static Dalamud.Bindings.ImGui.ImGuiCol;
-using static Dalamud.Bindings.ImGui.ImGuiWindowFlags;
+using static Hexa.NET.ImGui.ImGuiCol;
+using static Hexa.NET.ImGui.ImGuiWindowFlags;
 using static Dalamud.Interface.FontAwesomeIcon;
 using static Dalamud.Interface.Internal.UiDebug.UiDebug;
 using static Dalamud.Interface.UiBuilder;
@@ -80,7 +80,7 @@ internal unsafe class ElementSelector : IDisposable
     /// </summary>
     internal void DrawInterface()
     {
-        using var ch = ImRaii.Child("###sidebar_elementSelector"u8, new(250, -1), true);
+        using var ch = ImRaii.Child("###sidebar_elementSelector"u8, new(250, -1), ImGuiChildFlags.Borders);
 
         if (ch.Success)
         {
@@ -156,7 +156,7 @@ internal unsafe class ElementSelector : IDisposable
 
         using (ImRaii.PushColor(WindowBg, new Vector4(0.5f)))
         {
-            using var ch = ImRaii.Child("noClick"u8, new(800, 2000), false, NoInputs | NoBackground | NoScrollWithMouse);
+            using var ch = ImRaii.Child("noClick"u8, new(800, 2000), ImGuiChildFlags.None, NoInputs | NoBackground | NoScrollWithMouse);
             if (ch.Success)
             {
                 using var gr = ImRaii.Group();

@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Data;
 using Dalamud.Game;
 using Dalamud.Interface.Colors;
@@ -96,7 +96,7 @@ internal class UldWidget : IDataWindowWidget
                 uldNames = t.Result;
                 break;
             case { Exception: { } loadException }:
-                ImGui.TextColoredWrapped(ImGuiColors.DalamudRed, loadException.ToString());
+                ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudRed, loadException.ToString());
                 return;
             case { IsCanceled: true }:
                 ClearTask(ref this.uldNamesTask);
@@ -107,7 +107,7 @@ internal class UldWidget : IDataWindowWidget
         }
 
         var selectedUldPrev = this.selectedUld;
-        ImGui.Combo("##selectUld", ref this.selectedUld, uldNames);
+        ImGui.Combo("##selectUld", ref this.selectedUld, uldNames, uldNames.Length);
         ImGui.SameLine();
         if (ImGuiComponents.IconButton("selectUldLeft", FontAwesomeIcon.AngleLeft))
             this.selectedUld = ((this.selectedUld + uldNames.Length) - 1) % uldNames.Length;
@@ -123,7 +123,7 @@ internal class UldWidget : IDataWindowWidget
             ClearTask(ref this.selectedUldFileTask);
         }
 
-        ImGui.Combo("##selectTheme", ref this.selectedTheme, ThemeDisplayNames);
+        ImGui.Combo("##selectTheme", ref this.selectedTheme, ThemeDisplayNames, ThemeDisplayNames.Length);
         ImGui.SameLine();
         if (ImGuiComponents.IconButton("selectThemeLeft", FontAwesomeIcon.AngleLeft))
             this.selectedTheme = ((this.selectedTheme + ThemeDisplayNames.Length) - 1) % ThemeDisplayNames.Length;
@@ -144,7 +144,7 @@ internal class UldWidget : IDataWindowWidget
                 uld = this.selectedUldFileTask.Result;
                 break;
             case { Exception: { } loadException }:
-                ImGui.TextColoredWrapped(
+                ImGuiHelpers.TextColoredWrapped(
                     ImGuiColors.DalamudRed,
                     $"Failed to load ULD file.\n{loadException}");
                 return;
@@ -160,7 +160,7 @@ internal class UldWidget : IDataWindowWidget
         {
             if (ForceNullable(uld.AssetData) is null)
             {
-                ImGui.TextColoredWrapped(
+                ImGuiHelpers.TextColoredWrapped(
                     ImGuiColors.DalamudRed,
                     $"Error: {nameof(UldFile.AssetData)} is not populated.");
             }
@@ -184,7 +184,7 @@ internal class UldWidget : IDataWindowWidget
         {
             if (ForceNullable(uld.Timelines) is null)
             {
-                ImGui.TextColoredWrapped(
+                ImGuiHelpers.TextColoredWrapped(
                     ImGuiColors.DalamudRed,
                     $"Error: {nameof(UldFile.Timelines)} is not populated.");
             }
@@ -203,7 +203,7 @@ internal class UldWidget : IDataWindowWidget
         {
             if (ForceNullable(uld.Parts) is null)
             {
-                ImGui.TextColoredWrapped(
+                ImGuiHelpers.TextColoredWrapped(
                     ImGuiColors.DalamudRed,
                     $"Error: {nameof(UldFile.Parts)} is not populated.");
             }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 using CheapLoc;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Configuration.Internal;
 using Dalamud.Game;
 using Dalamud.Game.ClientState.GamePad;
@@ -749,12 +749,12 @@ internal partial class InterfaceManager : IInternalDisposableService
             if (!configuration.IsGamepadNavigationEnabled)
             {
                 ImGui.GetIO().BackendFlags &= ~ImGuiBackendFlags.HasGamepad;
-                ImGui.GetIO().ConfigFlags &= ~ImGuiConfigFlags.NavEnableSetMousePos;
+                ImGui.GetIO().ConfigNavMoveSetMousePos = false;
             }
             else
             {
                 ImGui.GetIO().BackendFlags |= ImGuiBackendFlags.HasGamepad;
-                ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.NavEnableSetMousePos;
+                ImGui.GetIO().ConfigNavMoveSetMousePos = true;
             }
 
             // NOTE (Chiv) Explicitly deactivate on dalamud boot

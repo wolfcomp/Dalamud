@@ -1,7 +1,7 @@
 using System.Numerics;
 using System.Text;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Textures.TextureWraps;
 
 namespace Dalamud.Interface.Textures;

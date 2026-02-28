@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
+using System.Text;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 
 namespace Dalamud.Interface.Utility;
 
@@ -35,8 +36,10 @@ public readonly ref struct ImGuiId
     {
         if (!id.IsEmpty)
         {
-            this.IdType = Type.U16;
-            this.U16 = id;
+            this.IdType = Type.U8;
+            var u8 = new byte[Encoding.UTF8.GetByteCount(id)];
+            Encoding.UTF8.GetBytes(id, u8);
+            this.U8 = u8;
         }
     }
 
@@ -60,9 +63,6 @@ public readonly ref struct ImGuiId
 
         /// <summary><see cref="ImGuiId.Numeric"/> field is used.</summary>
         Numeric,
-
-        /// <summary><see cref="ImGuiId.U16"/> field is used.</summary>
-        U16,
 
         /// <summary><see cref="ImGuiId.U8"/> field is used.</summary>
         U8,
@@ -146,7 +146,6 @@ public readonly ref struct ImGuiId
     {
         Type.None => true,
         Type.Numeric => this.Numeric == 0,
-        Type.U16 => this.U16.IsEmpty,
         Type.U8 => this.U8.IsEmpty,
         _ => true,
     };
@@ -159,9 +158,6 @@ public readonly ref struct ImGuiId
         {
             case Type.Numeric:
                 ImGui.PushID((void*)this.Numeric);
-                return true;
-            case Type.U16:
-                ImGui.PushID(this.U16);
                 return true;
             case Type.U8:
                 ImGui.PushID(this.U8);

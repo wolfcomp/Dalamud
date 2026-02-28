@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 using CheapLoc;
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Internal.Badge;
 using Dalamud.Interface.Internal.Windows.Settings.Widgets;
@@ -36,12 +36,12 @@ internal sealed class SettingsTabBadge : SettingsTab
         var badgeManager = Service<BadgeManager>.Get();
         var dalamudInterface = Service<DalamudInterface>.Get();
 
-        ImGui.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingBadgesHint", "On this tab, you can unlock small badges that show on your title screen.\nBadge codes are usually given out during community events or contests."));
+        ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingBadgesHint", "On this tab, you can unlock small badges that show on your title screen.\nBadge codes are usually given out during community events or contests."));
 
         ImGuiHelpers.ScaledDummy(5);
 
         ImGui.Text(Loc.Localize("DalamudSettingsBadgesUnlock", "Unlock a badge"));
-        ImGui.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingsBadgesUnlockHint", "If you have received a code for a badge, enter it here to unlock the badge."));
+        ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingsBadgesUnlockHint", "If you have received a code for a badge, enter it here to unlock the badge."));
         ImGui.InputTextWithHint(
             "##BadgePassword",
             Loc.Localize("DalamudSettingsBadgesUnlockHintInput", "Enter badge code here"),
@@ -79,7 +79,7 @@ internal sealed class SettingsTabBadge : SettingsTab
 
         if (haveBadges.Length == 0)
         {
-            ImGui.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingsBadgesDidNone", "You did not unlock any badges yet."));
+            ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingsBadgesDidNone", "You did not unlock any badges yet."));
         }
 
         var badgeTexture = Service<DalamudAssetManager>.Get().GetDalamudTextureWrap(DalamudAsset.BadgeAtlas);
@@ -94,7 +94,7 @@ internal sealed class SettingsTabBadge : SettingsTab
 
             var iconSize = ImGuiHelpers.ScaledVector2(64, 64);
             var cursorBeforeImage = ImGui.GetCursorPos();
-            var rectOffset = ImGui.GetWindowContentRegionMin() + ImGui.GetWindowPos();
+            var rectOffset = ImGui.GetWindowPos();
 
             if (ImGui.IsRectVisible(rectOffset + cursorBeforeImage, rectOffset + cursorBeforeImage + iconSize))
             {

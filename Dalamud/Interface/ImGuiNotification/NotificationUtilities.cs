@@ -2,7 +2,7 @@ using System.IO;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Game.Text;
 using Dalamud.Interface.Internal.Windows;
 using Dalamud.Interface.ManagedFontAtlas;
@@ -65,7 +65,7 @@ public static class NotificationUtilities
             var pos = ((minCoord + maxCoord) - size) / 2;
             pos += ImGui.GetWindowPos();
             ImGui.GetWindowDrawList().AddImage(
-                font.ContainerAtlas.Textures[glyph.TextureIndex].TexID,
+                font.ContainerAtlas.TexID,
                 pos,
                 pos + size,
                 glyph.UV0,

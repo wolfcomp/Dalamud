@@ -8,8 +8,8 @@ using System.Runtime.InteropServices;
 
 using CheapLoc;
 
-using Dalamud.Bindings.ImGui;
-using Dalamud.Bindings.ImPlot;
+using Hexa.NET.ImGui;
+using Hexa.NET.ImPlot;
 using Dalamud.Configuration.Internal;
 using Dalamud.Console;
 using Dalamud.Game.Addon.Lifecycle;
@@ -670,7 +670,7 @@ internal class DalamudInterface : IInternalDisposableService
                 ImGui.PushTextWrapPos(300 * ImGuiHelpers.GlobalScale);
                 ImGui.TextWrapped(badge.Name());
                 ImGui.Separator();
-                ImGui.TextColoredWrapped(ImGuiColors.DalamudGrey, badge.Description());
+                ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudGrey, badge.Description());
                 ImGui.PopTextWrapPos();
                 ImGui.EndTooltip();
             }
@@ -743,7 +743,7 @@ internal class DalamudInterface : IInternalDisposableService
                         ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoMouseInputs |
                         ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoSavedSettings))
                 {
-                    ImGui.TextColoredWrapped(ImGuiColors.DalamudRed, "Is force MinHook!"u8);
+                    ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudRed, "Is force MinHook!"u8);
                 }
 
                 ImGui.End();

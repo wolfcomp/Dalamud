@@ -5,7 +5,7 @@ using System.Numerics;
 
 using CheapLoc;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Game.Gui;
 using Dalamud.Interface.GameFonts;
 using Dalamud.Interface.ManagedFontAtlas;
@@ -267,7 +267,7 @@ Contribute at: https://github.com/goatcorp/Dalamud
     {
         var windowSize = ImGui.GetWindowSize();
 
-        using var child = ImRaii.Child("scrolling"u8, new Vector2(-1, -10 * ImGuiHelpers.GlobalScale), false, ImGuiWindowFlags.NoScrollbar);
+        using var child = ImRaii.Child("scrolling"u8, new Vector2(-1, -10 * ImGuiHelpers.GlobalScale), ImGuiChildFlags.None, ImGuiWindowFlags.NoScrollbar);
         if (!child)
             return;
 

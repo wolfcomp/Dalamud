@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Threading.Tasks;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Configuration.Internal;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Textures;
@@ -22,6 +22,8 @@ using Dalamud.Utility;
 using TerraFX.Interop.DirectX;
 
 using TextureManager = Dalamud.Interface.Textures.Internal.TextureManager;
+
+using FFXIVClientStructs.Interop;
 
 namespace Dalamud.Interface.Internal.Windows.Data.Widgets;
 
@@ -317,7 +319,7 @@ internal class TexWidget : IDataWindowWidget
                         if (this.inputTexScale != Vector2.Zero)
                             scale *= this.inputTexScale;
 
-                        ImGui.Image(tex.Handle, scale, this.inputTexUv0, this.inputTexUv1, this.inputTintCol);
+                        ImGui.ImageWithBg(tex.Handle, scale, this.inputTexUv0, this.inputTexUv1, Vector4.Zero, this.inputTintCol);
                     }
                     else
                     {
@@ -698,7 +700,8 @@ internal class TexWidget : IDataWindowWidget
         if (ImGui.Combo(
                 "Assembly",
                 ref this.inputManifestResourceAssemblyIndex,
-                this.inputManifestResourceAssemblyCandidateNames))
+                this.inputManifestResourceAssemblyCandidateNames,
+                this.inputManifestResourceAssemblyCandidateNames.Length))
         {
             this.inputManifestResourceNameIndex = 0;
             this.inputManifestResourceNameCandidates = null;
@@ -715,7 +718,8 @@ internal class TexWidget : IDataWindowWidget
         ImGui.Combo(
             "Name",
             ref this.inputManifestResourceNameIndex,
-            this.inputManifestResourceNameCandidates);
+            this.inputManifestResourceNameCandidates,
+            this.inputManifestResourceNameCandidates.Length);
 
         var name =
             this.inputManifestResourceNameIndex >= 0
@@ -807,7 +811,7 @@ internal class TexWidget : IDataWindowWidget
         ImGuiHelpers.ScaledDummy(10);
     }
 
-    private void DrawExistingTextureModificationArgs()
+    private unsafe void DrawExistingTextureModificationArgs()
     {
         var b = this.textureModificationArgs.MakeOpaque;
         if (ImGui.Checkbox(nameof(this.textureModificationArgs.MakeOpaque), ref b))
@@ -824,12 +828,12 @@ internal class TexWidget : IDataWindowWidget
         }
 
         this.supportedRenderTargetFormatNames ??= this.supportedRenderTargetFormats.Select(Enum.GetName).ToArray();
-        ImGui.Combo(nameof(this.textureModificationArgs.DxgiFormat), ref this.renderTargetChoiceInt, this.supportedRenderTargetFormatNames);
+        ImGui.Combo(nameof(this.textureModificationArgs.DxgiFormat), ref this.renderTargetChoiceInt, this.supportedRenderTargetFormatNames, this.supportedRenderTargetFormatNames.Length);
 
         Span<int> wh = stackalloc int[2];
         wh[0] = this.textureModificationArgs.NewWidth;
         wh[1] = this.textureModificationArgs.NewHeight;
-        if (ImGui.InputInt($"{nameof(this.textureModificationArgs.NewWidth)}/{nameof(this.textureModificationArgs.NewHeight)}", wh))
+        if (ImGui.InputInt($"{nameof(this.textureModificationArgs.NewWidth)}/{nameof(this.textureModificationArgs.NewHeight)}", wh.GetPointer(0), 2))
         {
             this.textureModificationArgs.NewWidth = wh[0];
             this.textureModificationArgs.NewHeight = wh[1];

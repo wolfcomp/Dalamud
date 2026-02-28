@@ -1,13 +1,13 @@
 using System.Numerics;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
-using static Dalamud.Bindings.ImGui.ImGuiTableColumnFlags;
-using static Dalamud.Bindings.ImGui.ImGuiTableFlags;
+using static Hexa.NET.ImGui.ImGuiTableColumnFlags;
+using static Hexa.NET.ImGui.ImGuiTableFlags;
 
 namespace Dalamud.Interface.Internal.UiDebug.Browsing;
 

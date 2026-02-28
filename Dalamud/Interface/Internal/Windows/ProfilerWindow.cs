@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Numerics;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
@@ -47,7 +47,7 @@ public class ProfilerWindow : Window
 
         var childHeight = Math.Max(300, 20 * (2.5f + this.occupied.Count));
 
-        if (ImGui.BeginChild("Timings"u8, new Vector2(0, childHeight), true))
+        if (ImGui.BeginChild("Timings"u8, new Vector2(0, childHeight), ImGuiChildFlags.Borders))
         {
             var pos = ImGui.GetCursorScreenPos();
 

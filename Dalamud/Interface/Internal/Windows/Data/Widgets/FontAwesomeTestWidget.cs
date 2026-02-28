@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.ImGuiSeStringRenderer;
 using Dalamud.Interface.Textures.Internal;
@@ -77,7 +77,7 @@ internal class FontAwesomeTestWidget : IDataWindowWidget
 
         ImGui.SetNextItemWidth(160f);
         var categoryIndex = this.selectedIconCategory;
-        if (ImGui.Combo("####FontAwesomeCategorySearch", ref categoryIndex, this.iconCategories))
+        if (ImGui.Combo("####FontAwesomeCategorySearch", ref categoryIndex, this.iconCategories, this.iconCategories.Length))
         {
             this.selectedIconCategory = categoryIndex;
             this.iconSearchChanged = true;

@@ -1,6 +1,6 @@
 using System.Numerics;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Textures.TextureWraps.Internal;
 
 using TerraFX.Interop.Windows;

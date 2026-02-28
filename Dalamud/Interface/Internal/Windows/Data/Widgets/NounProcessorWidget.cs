@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Text;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Data;
 using Dalamud.Game;
 using Dalamud.Game.ClientState;
@@ -89,7 +89,8 @@ internal class NounProcessorWidget : IDataWindowWidget
         var language = this.languages[this.selectedLanguageIndex];
 
         ImGui.SetNextItemWidth(300);
-        if (ImGui.Combo("###SelectedSheetName", ref this.selectedSheetNameIndex, NounSheets.Select(t => t.Name).ToArray()))
+        var sheets = NounSheets.Select(t => t.Name).ToArray();
+        if (ImGui.Combo("###SelectedSheetName", ref this.selectedSheetNameIndex, sheets, sheets.Length))
         {
             this.rowId = 1;
         }
@@ -97,7 +98,7 @@ internal class NounProcessorWidget : IDataWindowWidget
         ImGui.SameLine();
 
         ImGui.SetNextItemWidth(120);
-        if (ImGui.Combo("###SelectedLanguage", ref this.selectedLanguageIndex, this.languageNames))
+        if (ImGui.Combo("###SelectedLanguage", ref this.selectedLanguageIndex, this.languageNames, this.languageNames.Length))
         {
             language = this.languages[this.selectedLanguageIndex];
             this.rowId = 1;

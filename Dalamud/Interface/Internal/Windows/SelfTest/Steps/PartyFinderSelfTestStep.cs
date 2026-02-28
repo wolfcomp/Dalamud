@@ -1,4 +1,4 @@
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Game.Gui.PartyFinder;
 using Dalamud.Game.Gui.PartyFinder.Types;
 using Dalamud.Plugin.SelfTest;

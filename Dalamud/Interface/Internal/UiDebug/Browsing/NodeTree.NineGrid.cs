@@ -1,4 +1,4 @@
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Internal.UiDebug.Utility;
 
 using FFXIVClientStructs.FFXIV.Component.GUI;

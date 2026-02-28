@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 using CheapLoc;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Configuration.Internal;
 using Dalamud.Console;
 using Dalamud.Game;

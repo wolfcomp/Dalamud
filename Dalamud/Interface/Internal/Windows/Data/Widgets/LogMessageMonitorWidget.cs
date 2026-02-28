@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Game.Chat;
 using Dalamud.Game.Gui;
 using Dalamud.Interface.Utility;
@@ -92,7 +92,7 @@ internal class LogMessageMonitorWidget : IDataWindowWidget
         ImGuiHelpers.SeStringWrapped(data.Target);
 
         ImGui.TableNextColumn();
-        ImGui.Text(data.Parameters);
+        ImGui.Text(data.Parameters.Span);
 
         ImGui.TableNextColumn();
         ImGuiHelpers.SeStringWrapped(data.Formatted);

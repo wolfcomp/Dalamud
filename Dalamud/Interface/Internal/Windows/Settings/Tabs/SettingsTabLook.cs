@@ -5,7 +5,7 @@ using System.Text;
 
 using CheapLoc;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Configuration.Internal;
 using Dalamud.Game;
 using Dalamud.Interface.Colors;
@@ -170,7 +170,7 @@ internal sealed class SettingsTabLook : SettingsTab
         {
             CustomDraw = static e =>
             {
-                ImGui.TextWrapped(e.Name!);
+                ImGui.TextWrapped((ImU8String)e.Name!);
 
                 var v = e.Value * 100f;
                 if (ImGui.SliderFloat($"###{e}", ref v, 0f, 100f, "%.1f%%"))
@@ -231,7 +231,7 @@ internal sealed class SettingsTabLook : SettingsTab
             Service<InterfaceManager>.Get().InvokeGlobalScaleChanged();
         }
 
-        ImGui.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingsGlobalUiScaleHint", "Scale text in all XIVLauncher UI elements - this is useful for 4K displays."));
+        ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingsGlobalUiScaleHint", "Scale text in all XIVLauncher UI elements - this is useful for 4K displays."));
 
         if (fontBuildTask.IsFaulted || fontBuildTask.IsCanceled)
         {

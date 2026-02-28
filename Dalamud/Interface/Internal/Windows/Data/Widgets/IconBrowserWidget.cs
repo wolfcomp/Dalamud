@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Textures.Internal;
 using Dalamud.Interface.Textures.TextureWraps;
@@ -84,11 +84,11 @@ public class IconBrowserWidget : IDataWindowWidget
         {
             this.RecalculateIndexRange();
 
-            using (var child = ImRaii.Child("ScrollableSection"u8, ImGui.GetContentRegionAvail(), false, ImGuiWindowFlags.NoMove))
+            using (var child = ImRaii.Child("ScrollableSection"u8, ImGui.GetContentRegionAvail(), ImGuiChildFlags.None, ImGuiWindowFlags.NoMove))
             {
                 if (child.Success)
                 {
-                    var itemsPerRow = (int)MathF.Floor(ImGui.GetContentRegionMax().X / (this.iconSize.X + ImGui.GetStyle().ItemSpacing.X));
+                    var itemsPerRow = (int)MathF.Floor(((ImGui.GetContentRegionAvail() + ImGui.GetCursorScreenPos()) - ImGui.GetWindowPos()).X / (this.iconSize.X + ImGui.GetStyle().ItemSpacing.X));
                     var itemHeight = this.iconSize.Y + ImGui.GetStyle().ItemSpacing.Y;
 
                     ImGuiClip.ClippedDraw(this.valueRange!, this.DrawIcon, itemsPerRow, itemHeight);

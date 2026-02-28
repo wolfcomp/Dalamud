@@ -8,7 +8,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.GameFonts;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Utility;
@@ -104,8 +104,6 @@ internal sealed partial class FontAtlasFactory
 
         public ImVectorWrapper<ImFontConfig> ConfigData => this.Atlas.ConfigDataWrapped();
 
-        public ImVectorWrapper<ImFontAtlasTexture> ImTextures => this.Atlas.TexturesWrapped();
-
         public IReadOnlyList<IDalamudTextureWrap> Wraps => this.wraps;
 
         public IReadOnlyList<IFontHandleSubstance> Substances => this.substances;
@@ -118,53 +116,6 @@ internal sealed partial class FontAtlasFactory
             ObjectDisposedException.ThrowIf(this.wraps == null, this);
 
             this.wraps.Add(this.Garbage.Add(wrap));
-        }
-
-        public int AddNewTexture(IDalamudTextureWrap wrap, bool disposeOnError)
-        {
-            ObjectDisposedException.ThrowIf(this.wraps == null, this);
-
-            var handle = wrap.Handle;
-            var index = this.ImTextures.IndexOf(x => x.TexID == handle);
-            if (index == -1)
-            {
-                try
-                {
-                    this.wraps.EnsureCapacity(this.wraps.Count + 1);
-                    this.ImTextures.EnsureCapacityExponential(this.ImTextures.Length + 1);
-
-                    index = this.ImTextures.Length;
-                    this.wraps.Add(this.Garbage.Add(wrap));
-                    this.ImTextures.Add(new() { TexID = handle });
-                }
-                catch (Exception e)
-                {
-                    if (disposeOnError)
-                        wrap.Dispose();
-
-                    if (this.wraps.Count != this.ImTextures.Length)
-                    {
-                        Log.Error(
-                            e,
-                            "{name} failed, and {wraps} and {imtextures} have different number of items",
-                            nameof(this.AddNewTexture),
-                            nameof(this.Wraps),
-                            nameof(this.ImTextures));
-
-                        if (this.wraps.Count > 0 && this.wraps[^1] == wrap)
-                            this.wraps.RemoveAt(this.wraps.Count - 1);
-                        if (this.ImTextures.Length > 0 && this.ImTextures[^1].TexID == handle)
-                            this.ImTextures.RemoveAt(this.ImTextures.Length - 1);
-
-                        if (this.wraps.Count != this.ImTextures.Length)
-                            Log.Fatal("^ Failed to undo due to an internal inconsistency; embrace for a crash");
-                    }
-
-                    throw;
-                }
-            }
-
-            return index;
         }
 
         public int AddRef() => IRefCountable.AlterRefCount(1, ref this.refCount, out var newRefCount) switch

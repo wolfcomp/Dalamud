@@ -1,6 +1,6 @@
 using System.Linq;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Game.Text;
 
 namespace Dalamud.Interface.Internal.Windows.Data.Widgets;

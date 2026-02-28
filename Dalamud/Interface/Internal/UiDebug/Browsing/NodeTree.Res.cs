@@ -2,15 +2,15 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Internal.UiDebug.Utility;
 using Dalamud.Interface.Utility.Raii;
 
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
-using static Dalamud.Bindings.ImGui.ImGuiCol;
-using static Dalamud.Bindings.ImGui.ImGuiTreeNodeFlags;
+using static Hexa.NET.ImGui.ImGuiCol;
+using static Hexa.NET.ImGui.ImGuiTreeNodeFlags;
 using static Dalamud.Interface.ColorHelpers;
 using static Dalamud.Interface.FontAwesomeIcon;
 using static Dalamud.Interface.Internal.UiDebug.Browsing.Events;

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Game.Text;
 using Dalamud.Interface.ImGuiNotification;
 using Dalamud.Interface.ImGuiNotification.Internal;
@@ -72,16 +72,16 @@ internal class ImGuiWidget : IDataWindowWidget
 
         ImGui.Checkbox("##manualType"u8, ref this.notificationTemplate.ManualType);
         ImGui.SameLine();
-        ImGui.Combo("Type##type", ref this.notificationTemplate.TypeInt, NotificationTemplate.TypeTitles);
+        ImGui.Combo("Type##type", ref this.notificationTemplate.TypeInt, NotificationTemplate.TypeTitles, NotificationTemplate.TypeTitles.Length);
 
-        ImGui.Combo("Icon##iconCombo", ref this.notificationTemplate.IconInt, NotificationTemplate.IconTitles);
+        ImGui.Combo("Icon##iconCombo", ref this.notificationTemplate.IconInt, NotificationTemplate.IconTitles, NotificationTemplate.IconTitles.Length);
         switch (this.notificationTemplate.IconInt)
         {
             case 1 or 2:
                 ImGui.InputText("Icon Text##iconText"u8, ref this.notificationTemplate.IconText, 255);
                 break;
             case 5 or 6:
-                ImGui.Combo("Asset##iconAssetCombo", ref this.notificationTemplate.IconAssetInt, NotificationTemplate.AssetSources);
+                ImGui.Combo("Asset##iconAssetCombo", ref this.notificationTemplate.IconAssetInt, NotificationTemplate.AssetSources, NotificationTemplate.AssetSources.Length);
                 break;
             case 3 or 7:
                 ImGui.InputText("Game Path##iconText"u8, ref this.notificationTemplate.IconText, 255);
@@ -91,11 +91,11 @@ internal class ImGuiWidget : IDataWindowWidget
                 break;
         }
 
-        ImGui.Combo("Initial Duration", ref this.notificationTemplate.InitialDurationInt, NotificationTemplate.InitialDurationTitles);
+        ImGui.Combo("Initial Duration", ref this.notificationTemplate.InitialDurationInt, NotificationTemplate.InitialDurationTitles, NotificationTemplate.InitialDurationTitles.Length);
 
-        ImGui.Combo("Extension Duration", ref this.notificationTemplate.HoverExtendDurationInt, NotificationTemplate.HoverExtendDurationTitles);
+        ImGui.Combo("Extension Duration", ref this.notificationTemplate.HoverExtendDurationInt, NotificationTemplate.HoverExtendDurationTitles, NotificationTemplate.HoverExtendDurationTitles.Length);
 
-        ImGui.Combo("Progress", ref this.notificationTemplate.ProgressMode, NotificationTemplate.ProgressModeTitles);
+        ImGui.Combo("Progress", ref this.notificationTemplate.ProgressMode, NotificationTemplate.ProgressModeTitles, NotificationTemplate.ProgressModeTitles.Length);
 
         ImGui.Checkbox("Respect UI Hidden"u8, ref this.notificationTemplate.RespectUiHidden);
 

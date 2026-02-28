@@ -2,9 +2,10 @@ using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Internal;
 using Dalamud.Interface.Utility;
 using Dalamud.Utility;
@@ -72,14 +73,14 @@ internal sealed unsafe partial class DrawListTextureWrap
         /// <summary>Renders draw data.</summary>
         /// <param name="prtv">The render target.</param>
         /// <param name="drawData">Pointer to the draw data.</param>
-        public void RenderDrawData(ID3D11RenderTargetView* prtv, ImDrawDataPtr drawData)
+        public unsafe void RenderDrawData(ID3D11RenderTargetView* prtv, ImDrawDataPtr drawData)
         {
             ThreadSafety.AssertMainThread();
 
             if (drawData.DisplaySize.X <= 0 || drawData.DisplaySize.Y <= 0
                 || !drawData.Valid || drawData.CmdListsCount < 1)
                 return;
-            var cmdLists = new Span<ImDrawListPtr>(drawData.CmdLists, drawData.CmdListsCount);
+            var cmdLists = new Span<ImDrawListPtr>(drawData.CmdLists.Data, drawData.CmdListsCount);
 
             // Create and grow vertex/index buffers if needed
             if (this.vertexBufferSize < drawData.TotalVtxCount)
@@ -134,8 +135,8 @@ internal sealed unsafe partial class DrawListTextureWrap
                 var targetIndices = new Span<ushort>(indexData.pData, this.indexBufferSize);
                 foreach (ref var cmdList in cmdLists)
                 {
-                    var vertices = new ImVectorWrapper<ImDrawVert>(cmdList.VtxBuffer.ToUntyped());
-                    var indices = new ImVectorWrapper<ushort>(cmdList.IdxBuffer.ToUntyped());
+                    var vertices = new ImVectorWrapper<ImDrawVert>((ImVector<ImDrawVert>*)Unsafe.AsPointer(ref cmdList.VtxBuffer));
+                    var indices = new ImVectorWrapper<ushort>((ImVector<ushort>*)Unsafe.AsPointer(ref cmdList.IdxBuffer));
 
                     vertices.DataSpan.CopyTo(targetVertices);
                     indices.DataSpan.CopyTo(targetIndices);
@@ -225,7 +226,7 @@ internal sealed unsafe partial class DrawListTextureWrap
                 new Vector4(drawData.FramebufferScale, drawData.FramebufferScale.X, drawData.FramebufferScale.Y);
             foreach (ref var cmdList in cmdLists)
             {
-                var cmds = new ImVectorWrapper<ImDrawCmd>(cmdList.CmdBuffer.ToUntyped());
+                var cmds = new ImVectorWrapper<ImDrawCmd>((ImVector<ImDrawCmd>*)Unsafe.AsPointer(ref cmdList.CmdBuffer));
                 foreach (ref var cmd in cmds.DataSpan)
                 {
                     var clipV4 = (cmd.ClipRect - clipOff) * frameBufferScaleV4;

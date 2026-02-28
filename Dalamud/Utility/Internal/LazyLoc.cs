@@ -1,6 +1,6 @@
 using CheapLoc;
 
-using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 
 namespace Dalamud.Utility.Internal;
 

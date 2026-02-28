@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Console;
 using Dalamud.Memory;
 using Dalamud.Utility;
@@ -18,6 +18,7 @@ using TerraFX.Interop.Windows;
 using static TerraFX.Interop.Windows.Windows;
 
 using ERROR = TerraFX.Interop.Windows.ERROR;
+using Dalamud.Interface.Utility;
 
 namespace Dalamud.Interface.ImGuiBackend.InputHandler;
 
@@ -259,7 +260,7 @@ internal sealed unsafe partial class Win32InputHandler : IImGuiInputHandler
                 ClientToScreen(hWndCurrent, &mouseScreenPos);
                 if (this.ViewportFromPoint(mouseScreenPos).IsNull)
                 {
-                    var fltMax = ImGuiNative.GETFLTMAX();
+                    var fltMax = ImGui.GETFLTMAX();
                     io.AddMousePosEvent(-fltMax, -fltMax);
                 }
 
@@ -298,7 +299,7 @@ internal sealed unsafe partial class Win32InputHandler : IImGuiInputHandler
                 }
 
                 if (!ImGui.IsWindowHovered(ImGuiHoveredFlags.AnyWindow))
-                    ImGui.ClearWindowFocus();
+                    ImGui.SetWindowFocus((byte*)null);
 
                 break;
             }
@@ -418,7 +419,7 @@ internal sealed unsafe partial class Win32InputHandler : IImGuiInputHandler
             case WM.WM_CHAR:
                 if (io.WantTextInput)
                 {
-                    io.AddInputCharacter(new Rune((uint)wParam));
+                    io.AddInputCharacter((uint)wParam);
                     return nint.Zero;
                 }
 
@@ -782,7 +783,7 @@ internal sealed unsafe partial class Win32InputHandler : IImGuiInputHandler
             EnumDisplayMonitors(default, null, &EnumDisplayMonitorsCallback, default);
 
             Log.Information("Monitors set up!");
-            foreach (ref var monitor in pio.Handle->Monitors)
+            foreach (var monitor in new ImVectorWrapper<ImGuiPlatformMonitor>(&pio.Handle->Monitors))
             {
                 Log.Information(
                     "Monitor: {MainPos} {MainSize} {WorkPos} {WorkSize}",
@@ -815,8 +816,9 @@ internal sealed unsafe partial class Win32InputHandler : IImGuiInputHandler
                     WorkSize = workRb - workLt,
                     DpiScale = 1f,
                 };
+                var monitorWrapper = new ImVectorWrapper<ImGuiPlatformMonitor>((ImVector<ImGuiPlatformMonitor>*)Unsafe.AsPointer(ref ImGui.GetPlatformIO().Monitors));
                 if ((info.dwFlags & MONITORINFOF_PRIMARY) != 0)
-                    ImGui.GetPlatformIO().Monitors.PushFront(imMonitor);
+                    monitorWrapper.Insert(0, imMonitor);
                 else
                     ImGui.GetPlatformIO().Monitors.PushBack(imMonitor);
                 return true;

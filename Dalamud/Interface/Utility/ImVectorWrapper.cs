@@ -5,7 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 
 using JetBrains.Annotations;
 
@@ -18,7 +18,7 @@ namespace Dalamud.Interface.Utility;
 public unsafe struct ImVectorWrapper<T> : IList<T>, IList, IReadOnlyList<T>, IDisposable
     where T : unmanaged
 {
-    private ImVector* vector;
+    private ImVector<T>* vector;
     private ImGuiNativeDestroyDelegate? destroyer;
 
     /// <summary>
@@ -31,7 +31,7 @@ public unsafe struct ImVectorWrapper<T> : IList<T>, IList, IReadOnlyList<T>, IDi
     /// <param name="destroyer">The destroyer function to call on item removal.</param>
     /// <param name="ownership">Whether this wrapper owns the vector.</param>
     public ImVectorWrapper(
-        [NotNull] ImVector* vector,
+        [NotNull] ImVector<T>* vector,
         ImGuiNativeDestroyDelegate? destroyer = null,
         bool ownership = false)
     {
@@ -59,7 +59,7 @@ public unsafe struct ImVectorWrapper<T> : IList<T>, IList, IReadOnlyList<T>, IDi
                 $"{nameof(initialCapacity)} cannot be a negative number.");
         }
 
-        this.vector = (ImVector*)ImGui.MemAlloc((uint)sizeof(ImVector));
+        this.vector = (ImVector<T>*)ImGui.MemAlloc((uint)sizeof(ImVector<T>));
         if (this.vector is null)
             throw new OutOfMemoryException();
         *this.vector = default;
@@ -89,7 +89,7 @@ public unsafe struct ImVectorWrapper<T> : IList<T>, IList, IReadOnlyList<T>, IDi
     /// <summary>
     /// Gets the raw vector.
     /// </summary>
-    public ImVector* RawVector => this.vector;
+    public ImVector<T>* RawVector => this.vector;
 
     /// <summary>
     /// Gets a <see cref="Span{T}"/> view of the underlying ImVector{T}, for the range of <see cref="Length"/>.
@@ -115,39 +115,39 @@ public unsafe struct ImVectorWrapper<T> : IList<T>, IList, IReadOnlyList<T>, IDi
     /// <summary>
     /// Gets the underlying <see cref="ImVector"/>.
     /// </summary>
-    public ImVector* Vector =>
+    public ImVector<T>* Vector =>
         this.vector is null ? throw new ObjectDisposedException(nameof(ImVectorWrapper<T>)) : this.vector;
 
     /// <summary>
     /// Gets the number of items contained inside the underlying ImVector{T}.
     /// </summary>
-    public int Length => this.LengthUnsafe;
+    public int Length => this.Vector->Size;
 
     /// <summary>
     /// Gets the number of items <b>that can be</b> contained inside the underlying ImVector{T}.
     /// </summary>
-    public int Capacity => this.CapacityUnsafe;
+    public int Capacity => this.Vector->Capacity;
 
     /// <summary>
     /// Gets the pointer to the first item in the data inside underlying ImVector{T}.
     /// </summary>
-    public T* Data => this.DataUnsafe;
+    public T* Data => this.Vector->Data;
 
     /// <summary>
     /// Gets the reference to the number of items contained inside the underlying ImVector{T}.
     /// </summary>
-    public ref int LengthUnsafe => ref *&this.Vector->Size;
+    public ref int LengthUnsafe => ref ImVectorWrapper.GetSetLengthField(*this.Vector);
 
     /// <summary>
     /// Gets the reference to the number of items <b>that can be</b> contained inside the underlying ImVector{T}.
     /// </summary>
-    public ref int CapacityUnsafe => ref *&this.Vector->Capacity;
+    public ref int CapacityUnsafe => ref ImVectorWrapper.GetSetCapacityField(*this.Vector);
 
     /// <summary>
     /// Gets the reference to the pointer to the first item in the data inside underlying ImVector{T}.
     /// </summary>
     /// <remarks>This may be null, if <see cref="Capacity"/> is zero.</remarks>
-    public ref T* DataUnsafe => ref *(T**)&this.Vector->Data;
+    public ref T* DataUnsafe => ref ImVectorWrapper.GetSetDataField(*this.Vector);
 
     /// <inheritdoc cref="ICollection{T}.IsReadOnly"/>
     public bool IsReadOnly => false;
@@ -688,7 +688,7 @@ public static class ImVectorWrapper
     public static unsafe ImVectorWrapper<ImFontConfig> ConfigDataWrapped(this ImFontAtlasPtr obj) =>
         obj.Handle is null
             ? throw new NullReferenceException()
-            : new((ImVector*)Unsafe.AsPointer(ref obj.ConfigData), x => x->Destroy());
+            : new((ImVector<ImFontConfig>*)Unsafe.AsPointer(ref obj.Sources), x => x->Destroy());
 
     /// <summary>
     /// Wraps <see cref="ImFontAtlas.Fonts"/> into a <see cref="ImVectorWrapper{T}"/>.<br />
@@ -699,18 +699,7 @@ public static class ImVectorWrapper
     public static unsafe ImVectorWrapper<ImFontPtr> FontsWrapped(this ImFontAtlasPtr obj) =>
         obj.Handle is null
             ? throw new NullReferenceException()
-            : new((ImVector*)Unsafe.AsPointer(ref obj.Fonts), x => x->Destroy());
-
-    /// <summary>
-    /// Wraps <see cref="ImFontAtlas.Textures"/> into a <see cref="ImVectorWrapper{T}"/>.<br />
-    /// This does not need to be disposed.
-    /// </summary>
-    /// <param name="obj">The owner object.</param>
-    /// <returns>The wrapped vector.</returns>
-    public static unsafe ImVectorWrapper<ImFontAtlasTexture> TexturesWrapped(this ImFontAtlasPtr obj) =>
-        obj.Handle is null
-            ? throw new NullReferenceException()
-            : new((ImVector*)Unsafe.AsPointer(ref obj.Textures));
+            : new((ImVector<ImFontPtr>*)Unsafe.AsPointer(ref obj.Fonts), x => x->Destroy());
 
     /// <summary>
     /// Wraps <see cref="ImFont.Glyphs"/> into a <see cref="ImVectorWrapper{T}"/>.<br />
@@ -721,18 +710,7 @@ public static class ImVectorWrapper
     public static unsafe ImVectorWrapper<ImGuiHelpers.ImFontGlyphReal> GlyphsWrapped(this ImFontPtr obj) =>
         obj.Handle is null
             ? throw new NullReferenceException()
-            : new((ImVector*)Unsafe.AsPointer(ref obj.Glyphs));
-
-    /// <summary>
-    /// Wraps <see cref="ImFont.IndexedHotData"/> into a <see cref="ImVectorWrapper{T}"/>.<br />
-    /// This does not need to be disposed.
-    /// </summary>
-    /// <param name="obj">The owner object.</param>
-    /// <returns>The wrapped vector.</returns>
-    public static unsafe ImVectorWrapper<ImGuiHelpers.ImFontGlyphHotDataReal> IndexedHotDataWrapped(this ImFontPtr obj)
-        => obj.Handle is null
-               ? throw new NullReferenceException()
-               : new((ImVector*)Unsafe.AsPointer(ref obj.IndexedHotData));
+            : new((ImVector<ImGuiHelpers.ImFontGlyphReal>*)Unsafe.AsPointer(ref obj.Glyphs));
 
     /// <summary>
     /// Wraps <see cref="ImFont.IndexLookup"/> into a <see cref="ImVectorWrapper{T}"/>.<br />
@@ -743,5 +721,14 @@ public static class ImVectorWrapper
     public static unsafe ImVectorWrapper<ushort> IndexLookupWrapped(this ImFontPtr obj) =>
         obj.Handle is null
             ? throw new NullReferenceException()
-            : new((ImVector*)Unsafe.AsPointer(ref obj.IndexLookup));
+            : new((ImVector<ushort>*)Unsafe.AsPointer(ref obj.IndexLookup));
+
+    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "length")]
+    public static extern ref int GetSetLengthField<T>(ImVector<T> vec) where T : unmanaged;
+
+    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "capacity")]
+    public static extern ref int GetSetCapacityField<T>(ImVector<T> vec) where T : unmanaged;
+
+    [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "data")]
+    public static extern unsafe ref T* GetSetDataField<T>(ImVector<T> vec) where T : unmanaged;
 }

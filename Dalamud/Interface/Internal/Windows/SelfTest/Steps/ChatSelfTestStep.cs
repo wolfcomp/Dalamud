@@ -1,4 +1,4 @@
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Game.Chat;
 using Dalamud.Game.Gui;
 using Dalamud.Game.Text;

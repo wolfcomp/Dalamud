@@ -3,7 +3,7 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
@@ -68,7 +68,7 @@ internal class ServicesWidget : IDataWindowWidget
             var width = ImGui.GetContentRegionAvail().X;
             var childSize = new Vector2(width, (this.dependencyNodes.Count * (rowHeight + margin.Y)) + cellPad.Y);
 
-            using var child = ImRaii.Child("dependency-graph"u8, childSize, false, ImGuiWindowFlags.HorizontalScrollbar);
+            using var child = ImRaii.Child("dependency-graph"u8, childSize, ImGuiChildFlags.None, ImGuiWindowFlags.HorizontalScrollbar);
             if (child.Success)
             {
                 const uint rectBaseBorderColor = 0xFFFFFFFF;

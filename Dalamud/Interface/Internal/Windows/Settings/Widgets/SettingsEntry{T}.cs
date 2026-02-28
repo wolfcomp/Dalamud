@@ -2,9 +2,10 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Configuration.Internal;
 using Dalamud.Interface.Colors;
+using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Utility.Internal;
 
@@ -118,7 +119,7 @@ internal sealed class SettingsEntry<T> : SettingsEntry
         {
             using (ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudGrey))
             {
-                ImGui.TextWrapped(this.Description);
+                ImGui.TextWrapped((ImU8String)this.Description);
             }
         }
 

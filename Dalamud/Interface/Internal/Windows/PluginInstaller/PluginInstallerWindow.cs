@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 using CheapLoc;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Configuration.Internal;
 using Dalamud.Console;
 using Dalamud.Game.Command;
@@ -566,7 +566,7 @@ internal class PluginInstallerWindow : Window, IDisposable
         var windowSize = ImGui.GetWindowSize();
         var titleHeight = ImGui.GetFontSize() + (ImGui.GetStyle().FramePadding.Y * 2);
 
-        using var loadingChild = ImRaii.Child("###installerLoadingFrame"u8, new Vector2(-1, -1), false);
+        using var loadingChild = ImRaii.Child("###installerLoadingFrame"u8, new Vector2(-1, -1), ImGuiChildFlags.None);
         if (loadingChild)
         {
             ImGui.GetWindowDrawList().PushClipRectFullScreen();
@@ -666,7 +666,6 @@ internal class PluginInstallerWindow : Window, IDisposable
     private void DrawHeader()
     {
         var style = ImGui.GetStyle();
-        var windowSize = ImGui.GetWindowContentRegionMax();
 
         ImGui.SetCursorPosY(ImGui.GetCursorPosY() - (5 * ImGuiHelpers.GlobalScale));
 
@@ -700,7 +699,7 @@ internal class PluginInstallerWindow : Window, IDisposable
         var downShift = ImGui.GetCursorPosY() + (headerTextSize.Y / 4) - 2;
         ImGui.SetCursorPosY(downShift);
 
-        ImGui.SetCursorPosX(windowSize.X - sortSelectWidth - (style.ItemSpacing.X * 2) - searchInputWidth - searchClearButtonWidth);
+        ImGui.SetCursorPosX(sortSelectWidth + (style.ItemSpacing.X * 2) + searchInputWidth + searchClearButtonWidth);
 
         var isProfileManager =
             this.categoryManager.CurrentGroupKind == PluginCategoryManager.GroupKind.Installed &&
@@ -794,12 +793,11 @@ internal class PluginInstallerWindow : Window, IDisposable
         var configuration = Service<DalamudConfiguration>.Get();
         var pluginManager = Service<PluginManager>.Get();
 
-        var windowSize = ImGui.GetWindowContentRegionMax();
         var placeholderButtonSize = ImGuiHelpers.GetButtonSize("placeholder");
 
         ImGui.Separator();
 
-        ImGui.SetCursorPosY(windowSize.Y - placeholderButtonSize.Y);
+        ImGui.SetCursorPosY(placeholderButtonSize.Y);
 
         this.DrawUpdatePluginsButton();
 
@@ -823,7 +821,7 @@ internal class PluginInstallerWindow : Window, IDisposable
         var closeText = Locs.FooterButton_Close;
         var closeButtonSize = ImGuiHelpers.GetButtonSize(closeText);
 
-        ImGui.SameLine(windowSize.X - closeButtonSize.X - 20);
+        ImGui.SameLine(closeButtonSize.X + 20);
         if (ImGui.Button(closeText))
         {
             this.IsOpen = false;
@@ -1520,7 +1518,7 @@ internal class PluginInstallerWindow : Window, IDisposable
 
             try
             {
-                using (var categoriesChild = ImRaii.Child("InstallerCategoriesSelector"u8, new Vector2(useMenuWidth * ImGuiHelpers.GlobalScale, -1), false))
+                using (var categoriesChild = ImRaii.Child("InstallerCategoriesSelector"u8, new Vector2(useMenuWidth * ImGuiHelpers.GlobalScale, -1), ImGuiChildFlags.None))
                 {
                     if (categoriesChild)
                     {
@@ -1531,7 +1529,7 @@ internal class PluginInstallerWindow : Window, IDisposable
                 ImGui.SameLine();
 
                 using var scrollingChild =
-                    ImRaii.Child("ScrollingPlugins"u8, new Vector2(-1, -1), false, ImGuiWindowFlags.NoBackground);
+                    ImRaii.Child("ScrollingPlugins"u8, new Vector2(-1, -1), ImGuiChildFlags.None, ImGuiWindowFlags.NoBackground);
                 if (scrollingChild)
                 {
                     try
@@ -1556,7 +1554,7 @@ internal class PluginInstallerWindow : Window, IDisposable
         var colorSearchHighlight = Vector4.One;
         unsafe
         {
-            var colorPtr = ImGui.GetStyleColorVec4(ImGuiCol.NavHighlight);
+            var colorPtr = ImGui.GetStyleColorVec4(ImGuiCol.NavWindowingHighlight);
             if (colorPtr != null)
             {
                 colorSearchHighlight = *colorPtr;
@@ -1871,7 +1869,7 @@ internal class PluginInstallerWindow : Window, IDisposable
             if (ImGui.BeginChild(
                     "pluginTestingImageScrolling"u8,
                     new Vector2(width - (70 * ImGuiHelpers.GlobalScale), (PluginImageCache.PluginImageHeight / thumbFactor) + scrollBarSize),
-                    false,
+                    ImGuiChildFlags.None,
                     ImGuiWindowFlags.HorizontalScrollbar |
                     ImGuiWindowFlags.NoScrollWithMouse |
                     ImGuiWindowFlags.NoBackground))
@@ -1905,7 +1903,7 @@ internal class PluginInstallerWindow : Window, IDisposable
 
                         if (ImGui.BeginPopup(popupId))
                         {
-                            if (ImGui.ImageButton(image.Handle, new Vector2(image.Width, image.Height)))
+                            if (ImGui.ImageButton($"{popupId}CloseButton", image.Handle, new Vector2(image.Width, image.Height)))
                                 ImGui.CloseCurrentPopup();
 
                             ImGui.EndPopup();
@@ -1929,7 +1927,7 @@ internal class PluginInstallerWindow : Window, IDisposable
                         }
 
                         var size = ImGuiHelpers.ScaledVector2(xAct / thumbFactor, yAct / thumbFactor);
-                        if (ImGui.ImageButton(image.Handle, size))
+                        if (ImGui.ImageButton($"{popupId}OpenButton", image.Handle, size))
                             ImGui.OpenPopup(popupId);
 
                         ImGui.PopStyleVar();
@@ -2082,7 +2080,7 @@ internal class PluginInstallerWindow : Window, IDisposable
         var childId = $"plugin_child_{label}_{plugin?.EffectiveWorkingPluginId}_{manifest.InternalName}";
         const ImGuiWindowFlags childFlags = ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse;
 
-        using var pluginChild = ImRaii.Child(childId, new Vector2(ImGui.GetContentRegionAvail().X, sectionSize), false, childFlags);
+        using var pluginChild = ImRaii.Child(childId, new Vector2(ImGui.GetContentRegionAvail().X, sectionSize), ImGuiChildFlags.None, childFlags);
         if (!pluginChild)
         {
             return isOpen;
@@ -2160,7 +2158,7 @@ internal class PluginInstallerWindow : Window, IDisposable
 
         var iconSize = ImGuiHelpers.ScaledVector2(64, 64);
         var cursorBeforeImage = ImGui.GetCursorPos();
-        var rectOffset = ImGui.GetWindowContentRegionMin() + ImGui.GetWindowPos();
+        var rectOffset = ImGui.GetWindowPos();
 
         var overlayAlpha = 1.0f;
         if (ImGui.IsRectVisible(rectOffset + cursorBeforeImage, rectOffset + cursorBeforeImage + iconSize))
@@ -2383,7 +2381,7 @@ internal class PluginInstallerWindow : Window, IDisposable
 
         var iconSize = ImGuiHelpers.ScaledVector2(64, 64);
         var cursorBeforeImage = ImGui.GetCursorPos();
-        var rectOffset = ImGui.GetWindowContentRegionMin() + ImGui.GetWindowPos();
+        var rectOffset = ImGui.GetWindowPos();
         if (ImGui.IsRectVisible(rectOffset + cursorBeforeImage, rectOffset + cursorBeforeImage + iconSize))
         {
             IDalamudTextureWrap icon;
@@ -2987,7 +2985,7 @@ internal class PluginInstallerWindow : Window, IDisposable
 
         ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(7, 5));
 
-        if (ImGui.BeginChild("##changelog"u8, new Vector2(-1, 100), true, ImGuiWindowFlags.NoNavFocus | ImGuiWindowFlags.NoNavInputs | ImGuiWindowFlags.AlwaysAutoResize))
+        if (ImGui.BeginChild("##changelog"u8, new Vector2(-1, 100), ImGuiChildFlags.Borders, ImGuiWindowFlags.NoNavFocus | ImGuiWindowFlags.NoNavInputs | ImGuiWindowFlags.AlwaysAutoResize))
         {
             ImGui.Text("Changelog:"u8);
             ImGuiHelpers.ScaledDummy(2);
@@ -3431,7 +3429,7 @@ internal class PluginInstallerWindow : Window, IDisposable
     {
         if (!devPlugin.IsLoaded)
         {
-            ImGui.TextColoredWrapped(ImGuiColors.DalamudGrey, "You have to load this plugin to see validation issues."u8);
+            ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudGrey, "You have to load this plugin to see validation issues."u8);
         }
         else
         {
@@ -3442,7 +3440,7 @@ internal class PluginInstallerWindow : Window, IDisposable
                 ImGui.Text(FontAwesomeIcon.Check.ToIconString());
                 ImGui.PopFont();
                 ImGui.SameLine();
-                ImGui.TextColoredWrapped(ImGuiColors.HealerGreen, "No validation issues found in this plugin!"u8);
+                ImGuiHelpers.TextColoredWrapped(ImGuiColors.HealerGreen, "No validation issues found in this plugin!"u8);
             }
             else
             {
@@ -3720,7 +3718,7 @@ internal class PluginInstallerWindow : Window, IDisposable
 
         var width = ImGui.GetWindowWidth();
 
-        if (ImGui.BeginChild($"plugin{index}ImageScrolling", new Vector2(width - (70 * ImGuiHelpers.GlobalScale), (PluginImageCache.PluginImageHeight / thumbFactor) + scrollBarSize), false, ImGuiWindowFlags.HorizontalScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoBackground))
+        if (ImGui.BeginChild($"plugin{index}ImageScrolling", new Vector2(width - (70 * ImGuiHelpers.GlobalScale), (PluginImageCache.PluginImageHeight / thumbFactor) + scrollBarSize), ImGuiChildFlags.None, ImGuiWindowFlags.HorizontalScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoBackground))
         {
             for (var i = 0; i < imageTextures.Length; i++)
             {
@@ -3735,7 +3733,7 @@ internal class PluginInstallerWindow : Window, IDisposable
                 var popupId = $"plugin{index}image{i}";
                 if (ImGui.BeginPopup(popupId))
                 {
-                    if (ImGui.ImageButton(image.Handle, new Vector2(image.Width, image.Height)))
+                    if (ImGui.ImageButton($"{popupId}CloseButton", image.Handle, new Vector2(image.Width, image.Height)))
                         ImGui.CloseCurrentPopup();
 
                     ImGui.EndPopup();
@@ -3759,7 +3757,7 @@ internal class PluginInstallerWindow : Window, IDisposable
                 }
 
                 var size = ImGuiHelpers.ScaledVector2(xAct / thumbFactor, yAct / thumbFactor);
-                if (ImGui.ImageButton(image.Handle, size))
+                if (ImGui.ImageButton($"{popupId}OpenButton", image.Handle, size))
                     ImGui.OpenPopup(popupId);
 
                 ImGui.PopStyleVar();

@@ -1,6 +1,10 @@
 using System.Numerics;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
+
+using HexaGen.Runtime;
 
 namespace Dalamud.Interface.Utility;
 
@@ -51,11 +55,39 @@ public static class ImGuiExtensions
                 ImGui.GetColorU32(ImGuiCol.Text),
                 text,
                 0,
-                fineClipRect);
+                &fineClipRect);
         }
         else
         {
             drawListPtr.AddText(ImGui.GetFont(), ImGui.GetFontSize(), pos, ImGui.GetColorU32(ImGuiCol.Text), text);
         }
     }
+
+    extension(STBTexteditStatePtr state)
+    {
+        public unsafe ref int Cursor => ref ((STBTexteditState*)state.Handle)->Cursor;
+        public unsafe ref int SelectStart => ref ((STBTexteditState*)state.Handle)->SelectStart;
+        public unsafe ref int SelectEnd => ref ((STBTexteditState*)state.Handle)->SelectEnd;
+    }
+
+    extension(ImGui)
+    {
+        [UnsafeAccessor(UnsafeAccessorKind.StaticField, Name = "funcTable")]
+        private static extern ref FunctionTable GetFunctionTable();
+
+        public static unsafe void ImGuiInputTextStateOnKeyPressed(ImGuiInputTextState* self, int key) => ((delegate* unmanaged<ImGuiInputTextState*, int, void>)GetFunctionTable()[860])(self, key);
+
+        public static unsafe ImRect* WindowTitleBarRect(ImGuiWindow* self) => ((delegate* unmanaged<ImGuiWindow*, ImRect*>)GetFunctionTable()[969])(self);
+        public static unsafe bool RectContains(ImRect* self, Vector2 vec) => ((delegate* unmanaged<ImRect*, Vector2, bool>)GetFunctionTable()[969])(self, vec);
+    }
+}
+
+[StructLayout(LayoutKind.Sequential)]
+public struct STBTexteditState
+{
+    public int Cursor;
+    public int SelectStart;
+    public int SelectEnd;
+    public byte InsertMode;
+    int RowCountPerPage;
 }

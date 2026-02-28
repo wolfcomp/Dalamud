@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 
 using Microsoft.Extensions.ObjectPool;
 

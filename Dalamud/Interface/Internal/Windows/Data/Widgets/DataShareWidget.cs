@@ -4,7 +4,7 @@ using System.Numerics;
 using System.Reflection;
 using System.Text;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.ImGuiNotification;
 using Dalamud.Interface.ImGuiNotification.Internal;
 using Dalamud.Interface.Utility;
@@ -113,7 +113,13 @@ internal class DataShareWidget : IDataWindowWidget
             if (ImGui.Button("Copy"u8))
                 ImGui.SetClipboardText(data);
 
-            ImGui.InputTextMultiline("text"u8, data, ImGui.GetContentRegionAvail(), ImGuiInputTextFlags.ReadOnly);
+            unsafe
+            {
+                fixed (byte* dataPtr = data)
+                {
+                    ImGui.InputTextMultiline("text"u8, dataPtr, (ulong)data.Length, ImGui.GetContentRegionAvail(), ImGuiInputTextFlags.ReadOnly);
+                }
+            }
         }
 
         this.nextTab = -1;
@@ -225,7 +231,7 @@ internal class DataShareWidget : IDataWindowWidget
         {
             ImGui.SetClipboardText(tooltip?.Invoke() ?? s);
             Service<NotificationManager>.Get().AddNotification(
-                $"Copied {ImGui.TableGetColumnName()} to clipboard.",
+                $"Copied {ImGui.TableGetColumnNameS()} to clipboard.",
                 this.DisplayName,
                 NotificationType.Success);
         }

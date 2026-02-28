@@ -1,6 +1,6 @@
 using System.Numerics;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 
@@ -187,7 +187,7 @@ internal unsafe class AtkArrayDataBrowserWidget : IDataWindowWidget
 
         ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 
-        using var child = ImRaii.Child("AtkArrayContent"u8, new Vector2(-1), true, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoSavedSettings);
+        using var child = ImRaii.Child("AtkArrayContent"u8, new Vector2(-1), ImGuiChildFlags.Borders, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoSavedSettings);
         if (!child) return;
 
         var array = atkArrayDataHolder.NumberArrays[this.selectedNumberArray];
@@ -241,7 +241,7 @@ internal unsafe class AtkArrayDataBrowserWidget : IDataWindowWidget
 
         var atkArrayDataHolder = RaptureAtkModule.Instance()->AtkArrayDataHolder;
 
-        using (var sidebarChild = ImRaii.Child("StringArraySidebar"u8, new Vector2(300, -1), false, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoSavedSettings))
+        using (var sidebarChild = ImRaii.Child("StringArraySidebar"u8, new Vector2(300, -1), ImGuiChildFlags.None, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoSavedSettings))
         {
             if (sidebarChild)
             {
@@ -262,7 +262,7 @@ internal unsafe class AtkArrayDataBrowserWidget : IDataWindowWidget
 
         ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 
-        using var child = ImRaii.Child("AtkArrayContent"u8, new Vector2(-1), true, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoSavedSettings);
+        using var child = ImRaii.Child("AtkArrayContent"u8, new Vector2(-1), ImGuiChildFlags.Borders, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoSavedSettings);
         if (!child) return;
 
         var array = atkArrayDataHolder.StringArrays[this.selectedStringArray];
@@ -357,7 +357,7 @@ internal unsafe class AtkArrayDataBrowserWidget : IDataWindowWidget
 
         ImGui.SameLine(0, ImGui.GetStyle().ItemInnerSpacing.X);
 
-        using var child = ImRaii.Child("AtkArrayContent"u8, new Vector2(-1), true, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoSavedSettings);
+        using var child = ImRaii.Child("AtkArrayContent"u8, new Vector2(-1), ImGuiChildFlags.Borders, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoSavedSettings);
 
         var array = atkArrayDataHolder.ExtendArrays[this.selectedExtendArray];
         this.DrawArrayHeader(null, "Extend", this.selectedExtendArray, (AtkArrayData*)array);

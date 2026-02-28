@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility.Raii;
 
@@ -65,7 +65,7 @@ internal unsafe partial class UiDebug
 
     private void DrawNameSearch()
     {
-        using var ch = ImRaii.Child("###sidebar_nameSearch"u8, new(250, 40), true);
+        using var ch = ImRaii.Child("###sidebar_nameSearch"u8, new(250, 40), ImGuiChildFlags.Borders);
 
         if (ch.Success)
         {
@@ -94,7 +94,7 @@ internal unsafe partial class UiDebug
 
     private void DrawAddonSelectionList()
     {
-        using var ch = ImRaii.Child("###sideBar_addonList"u8, new(250, -44), true, ImGuiWindowFlags.AlwaysVerticalScrollbar);
+        using var ch = ImRaii.Child("###sideBar_addonList"u8, new(250, -44), ImGuiChildFlags.Borders, ImGuiWindowFlags.AlwaysVerticalScrollbar);
         if (ch.Success)
         {
             var unitListBaseAddr = GetUnitListBaseAddr();

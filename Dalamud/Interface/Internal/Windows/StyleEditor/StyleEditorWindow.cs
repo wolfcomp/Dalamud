@@ -4,7 +4,8 @@ using System.Reflection;
 
 using CheapLoc;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
+
 using Dalamud.Configuration.Internal;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
@@ -90,7 +91,7 @@ public class StyleEditorWindow : Window
 
         var styleAry = config.SavedStyles.Select(x => x.Name).ToArray();
         ImGui.Text(Loc.Localize("StyleEditorChooseStyle", "Choose Style:"));
-        if (ImGui.Combo("###styleChooserCombo", ref this.currentSel, styleAry))
+        if (ImGui.Combo("###styleChooserCombo", ref this.currentSel, styleAry, styleAry.Length))
         {
             var newStyle = config.SavedStyles[this.currentSel];
             newStyle.Apply();
@@ -175,7 +176,7 @@ public class StyleEditorWindow : Window
         {
             this.SaveStyle();
 
-            var styleJson = ImGui.GetClipboardText();
+            var styleJson = ImGui.GetClipboardTextS();
 
             try
             {
@@ -224,7 +225,7 @@ public class StyleEditorWindow : Window
             var changes = false;
             if (ImGui.BeginTabItem(Loc.Localize("StyleEditorVariables", "Variables")))
             {
-                if (ImGui.BeginChild($"ScrollingVars", ImGuiHelpers.ScaledVector2(0, -32), true, ImGuiWindowFlags.HorizontalScrollbar | ImGuiWindowFlags.NoBackground))
+                if (ImGui.BeginChild($"ScrollingVars", ImGuiHelpers.ScaledVector2(0, -32), ImGuiChildFlags.Borders, ImGuiWindowFlags.HorizontalScrollbar | ImGuiWindowFlags.NoBackground))
                 {
                     ImGui.SetCursorPosY(ImGui.GetCursorPosY() - 5);
 
@@ -255,7 +256,8 @@ public class StyleEditorWindow : Window
                     ImGui.Text("Alignment"u8);
                     changes |= ImGui.SliderFloat2("WindowTitleAlign", ref style.WindowTitleAlign, 0.0f, 1.0f, "%.2f");
                     var windowMenuButtonPosition = (int)style.WindowMenuButtonPosition + 1;
-                    if (ImGui.Combo("WindowMenuButtonPosition"u8, ref windowMenuButtonPosition, ["None", "Left", "Right"]))
+                    var windowMenuButtonPositionArrays = new[] { "None", "Left", "Right" };
+                    if (ImGui.Combo("WindowMenuButtonPosition", ref windowMenuButtonPosition, windowMenuButtonPositionArrays, windowMenuButtonPositionArrays.Length))
                     {
                         style.WindowMenuButtonPosition = (ImGuiDir)(windowMenuButtonPosition - 1);
                         changes = true;
@@ -280,15 +282,15 @@ public class StyleEditorWindow : Window
 
             if (ImGui.BeginTabItem(Loc.Localize("StyleEditorColors", "Colors")))
             {
-                if (ImGui.BeginChild("ScrollingColors"u8, ImGuiHelpers.ScaledVector2(0, -30), true, ImGuiWindowFlags.HorizontalScrollbar | ImGuiWindowFlags.NoBackground))
+                if (ImGui.BeginChild("ScrollingColors"u8, ImGuiHelpers.ScaledVector2(0, -30), ImGuiChildFlags.Borders, ImGuiWindowFlags.HorizontalScrollbar | ImGuiWindowFlags.NoBackground))
                 {
                     ImGui.SetCursorPosY(ImGui.GetCursorPosY() - 5);
 
                     if (ImGui.RadioButton("Opaque"u8, this.alphaFlags == ImGuiColorEditFlags.None))
                         this.alphaFlags = ImGuiColorEditFlags.None;
                     ImGui.SameLine();
-                    if (ImGui.RadioButton("Alpha"u8, this.alphaFlags == ImGuiColorEditFlags.AlphaPreview))
-                        this.alphaFlags = ImGuiColorEditFlags.AlphaPreview;
+                    if (ImGui.RadioButton("Alpha"u8, this.alphaFlags == ImGuiColorEditFlags.AlphaNoBg))
+                        this.alphaFlags = ImGuiColorEditFlags.AlphaNoBg;
                     ImGui.SameLine();
                     if (ImGui.RadioButton("Both"u8, this.alphaFlags == ImGuiColorEditFlags.AlphaPreviewHalf))
                         this.alphaFlags = ImGuiColorEditFlags.AlphaPreviewHalf;

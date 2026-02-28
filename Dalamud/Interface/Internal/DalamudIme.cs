@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Unicode;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Configuration.Internal;
 using Dalamud.Game.Text;
 using Dalamud.Hooking.WndProcHook;
@@ -115,8 +115,8 @@ internal sealed unsafe class DalamudIme : IInternalDisposableService
         this.interfaceManager = imws.Manager;
         this.setPlatformImeDataDelegate = this.ImGuiSetPlatformImeData;
 
-        var io = ImGui.GetIO();
-        io.SetPlatformImeDataFn = Marshal.GetFunctionPointerForDelegate(this.setPlatformImeDataDelegate).ToPointer();
+        var io = ImGui.GetPlatformIO();
+        io.PlatformSetImeDataFn = Marshal.GetFunctionPointerForDelegate(this.setPlatformImeDataDelegate).ToPointer();
         this.interfaceManager.Draw += this.Draw;
         this.wndProcHookManager.PreWndProc += this.WndProcHookManagerOnPreWndProc;
     }
@@ -261,8 +261,8 @@ internal sealed unsafe class DalamudIme : IInternalDisposableService
     {
         if (ImGuiHelpers.IsImGuiInitialized)
         {
-            var io = ImGui.GetIO();
-            io.SetPlatformImeDataFn = null;
+            var io = ImGui.GetPlatformIO();
+            io.PlatformSetImeDataFn = null;
         }
     }
 
@@ -546,7 +546,7 @@ internal sealed unsafe class DalamudIme : IInternalDisposableService
         }
 
         textState.SanitizeSelectionRange();
-        if (textState.ReplaceSelectionAndPushUndo(newString))
+        if (textState.ReplaceSelectionAndPushUndo(new ImU8String(newString)))
             this.temporaryUndoSelection = textState.GetSelectionTuple();
 
         // Put the cursor at the beginning, so that the candidate window appears aligned with the text.
@@ -805,7 +805,7 @@ internal sealed unsafe class DalamudIme : IInternalDisposableService
                 var selected = i == (native.dwSelection % ImePageSize);
                 var color = ImGui.GetColorU32(ImGuiCol.Text);
                 if (selected)
-                    color = ImGui.GetColorU32(ImGuiCol.NavHighlight);
+                    color = ImGui.GetColorU32(ImGuiCol.NavWindowingHighlight);
 
                 var s = $"{i + 1}. {ime.candidateStrings[i].String}";
                 drawList.AddText(cursor, color, s);

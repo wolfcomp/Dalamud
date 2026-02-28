@@ -2,7 +2,7 @@ using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 
 namespace Dalamud.Interface.Utility;
 
@@ -52,8 +52,7 @@ public unsafe struct BufferBackedImDrawData : IDisposable
             float.PositiveInfinity);
 
         ds->List.Data = &ds->SharedData;
-        ds->ListPtr = &ds->List;
-        ds->Data.CmdLists = &ds->ListPtr;
+        ds->Data.CmdLists = ds->ListVec;
         ds->Data.CmdListsCount = 1;
         ds->Data.FramebufferScale = Vector2.One;
 
@@ -85,7 +84,7 @@ public unsafe struct BufferBackedImDrawData : IDisposable
     private struct DataStruct
     {
         public ImDrawData Data;
-        public ImDrawList* ListPtr;
+        public ImVector<ImDrawListPtr> ListVec;
         public ImDrawList List;
         public ImDrawListSharedData SharedData;
     }

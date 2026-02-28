@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 
-using Dalamud.Bindings.ImGui;
-using Dalamud.Bindings.ImPlot;
+using Hexa.NET.ImGui;
+using Hexa.NET.ImPlot;
 
 namespace Dalamud.Interface.Utility.Raii;
 

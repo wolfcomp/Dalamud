@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Numerics;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility;
@@ -145,7 +145,7 @@ internal class SelfTestWindow : Window
 
         if (this.currentTestGroup?.Loaded == false)
         {
-            ImGui.TextColoredWrapped(ImGuiColors.DalamudGrey, $"Plugin '{this.currentTestGroup.Name}' is unloaded. No tests available.");
+            ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudGrey, $"Plugin '{this.currentTestGroup.Name}' is unloaded. No tests available.");
             ImGui.Spacing();
         }
 
@@ -162,11 +162,11 @@ internal class SelfTestWindow : Window
 
             if (this.visibleSteps.Any(test => test.Result == SelfTestStepResult.Fail))
             {
-                ImGui.TextColoredWrapped(ImGuiColors.DalamudRed, "One or more checks failed!"u8);
+                ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudRed, "One or more checks failed!"u8);
             }
             else if (this.visibleSteps.All(test => test.Result == SelfTestStepResult.Pass))
             {
-                ImGui.TextColoredWrapped(ImGuiColors.HealerGreen, "All checks passed!"u8);
+                ImGuiHelpers.TextColoredWrapped(ImGuiColors.HealerGreen, "All checks passed!"u8);
             }
 
             return;

@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Game;
 using Dalamud.Interface.FontIdentifier;
 using Dalamud.Interface.GameFonts;
@@ -17,6 +17,8 @@ using Dalamud.Interface.Utility.Raii;
 using Dalamud.Utility;
 
 using Serilog;
+
+using FFXIVClientStructs.Interop;
 
 namespace Dalamud.Interface.Internal.Windows.Data.Widgets;
 
@@ -62,7 +64,7 @@ internal class GamePrebakedFontsTestWidget : IDataWindowWidget, IDisposable
     public unsafe void Draw()
     {
         ImGui.AlignTextToFramePadding();
-        if (ImGui.Combo("Global Scale per Font"u8, ref this.fontScaleMode, FontScaleModes))
+        if (ImGui.Combo("Global Scale per Font", ref this.fontScaleMode, FontScaleModes, FontScaleModes.Length))
             this.ClearAtlas();
 
         if (ImGui.Checkbox("Global Scale for Atlas"u8, ref this.atlasScaleMode))
@@ -184,8 +186,9 @@ internal class GamePrebakedFontsTestWidget : IDataWindowWidget, IDisposable
             {
                 if (ImGui.InputTextMultiline(
                         labelPtr,
-                        this.testStringBuffer.StorageSpan,
-                        new(ImGui.GetContentRegionAvail().X, ImGui.GetTextLineHeight() * 3)))
+                        this.testStringBuffer.StorageSpan.GetPointer(0),
+                        (ulong)this.testStringBuffer.StorageSpan.Length,
+                        new Vector2(ImGui.GetContentRegionAvail().X, ImGui.GetTextLineHeight() * 3)))
                 {
                     var len = this.testStringBuffer.StorageSpan.IndexOf((byte)0);
                     if (len + 4 >= this.testStringBuffer.Capacity)
@@ -342,7 +345,7 @@ internal class GamePrebakedFontsTestWidget : IDataWindowWidget, IDisposable
 
         static void TestSingle(ImFontPtr fontPtr, IFontHandle handle)
         {
-            var dim = ImGui.CalcTextSizeA(fontPtr, fontPtr.FontSize, float.MaxValue, 0f, "Test string"u8, out _);
+            var dim = ImGui.CalcTextSizeA(fontPtr, fontPtr.FontSize, float.MaxValue, 0f, "Test string"u8);
             Log.Information($"{nameof(GamePrebakedFontsTestWidget)}: {handle} => {dim}");
         }
     }

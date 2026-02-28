@@ -1,6 +1,6 @@
 using System.Numerics;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Internal.UiDebug.Browsing;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
@@ -51,7 +51,7 @@ internal unsafe class NodePopoutWindow : Window, IDisposable
     {
         if (this.Node != null && this.AddonTree.ContainsNode(this.Node))
         {
-            using var ch = ImRaii.Child($"{(nint)this.Node:X}popoutChild", Vector2.Zero, true);
+            using var ch = ImRaii.Child($"{(nint)this.Node:X}popoutChild", Vector2.Zero, ImGuiChildFlags.Borders);
             if (ch.Success)
             {
                 ResNodeTree.GetOrCreate(this.Node, this.AddonTree).Print(null, this.firstDraw);

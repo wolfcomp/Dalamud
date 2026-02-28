@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 using CheapLoc;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Configuration.Internal;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
@@ -176,7 +176,7 @@ internal class ProfileManagerWidget
         {
             try
             {
-                profman.ImportProfile(ImGui.GetClipboardText());
+                profman.ImportProfile(ImGui.GetClipboardTextS());
                 Service<NotificationManager>.Get().AddNotification(Locs.NotificationImportSuccess, type: NotificationType.Success);
             }
             catch (Exception ex)

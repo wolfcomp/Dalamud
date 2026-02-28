@@ -1,6 +1,6 @@
 using System.Numerics;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Internal.UiDebug.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Utility;

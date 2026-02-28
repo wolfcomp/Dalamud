@@ -4,7 +4,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Data;
 using Dalamud.Game;
 using Dalamud.Game.ClientState;
@@ -594,7 +594,7 @@ internal class SeStringCreatorWidget : IDataWindowWidget
             return;
         }
 
-        var sheetChanged = ImGui.Combo("Sheet Name", ref this.importSelectedSheetName, this.validImportSheetNames);
+        var sheetChanged = ImGui.Combo("Sheet Name", ref this.importSelectedSheetName, this.validImportSheetNames, this.validImportSheetNames.Length);
 
         try
         {
@@ -706,7 +706,7 @@ internal class SeStringCreatorWidget : IDataWindowWidget
             ImGui.TableNextColumn(); // Type
             var type = (int)entry.Type;
             ImGui.SetNextItemWidth(-1);
-            if (ImGui.Combo($"##Type{i}", ref type, TextEntryTypeOptions))
+            if (ImGui.Combo($"##Type{i}", ref type, TextEntryTypeOptions, TextEntryTypeOptions.Length))
             {
                 entry.Type = (TextEntryType)type;
                 updateString |= true;

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 
 using TerraFX.Interop.Windows;
 

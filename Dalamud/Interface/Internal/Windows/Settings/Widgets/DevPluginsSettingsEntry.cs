@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using CheapLoc;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Configuration;
 using Dalamud.Configuration.Internal;
 using Dalamud.Interface.Colors;
@@ -62,7 +62,7 @@ internal sealed class DevPluginsSettingsEntry : SettingsEntry
     {
         using var id = ImRaii.PushId("devPluginLocation"u8);
 
-        ImGui.Text(this.Name);
+        ImGui.Text((ImU8String)this.Name);
 
         if (this.devPluginLocationsChanged)
         {
@@ -73,7 +73,7 @@ internal sealed class DevPluginsSettingsEntry : SettingsEntry
             }
         }
 
-        ImGui.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingsDevPluginLocationsHint", "Add dev plugin load locations.\nThis must be a path to the plugin DLL."));
+        ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudGrey, Loc.Localize("DalamudSettingsDevPluginLocationsHint", "Add dev plugin load locations.\nThis must be a path to the plugin DLL."));
 
         var locationSelect = Loc.Localize("DalamudDevPluginLocationSelect", "Select Dev Plugin DLL");
         if (ImGuiComponents.IconButtonWithText(FontAwesomeIcon.Folder, locationSelect))
@@ -95,7 +95,7 @@ internal sealed class DevPluginsSettingsEntry : SettingsEntry
 
         ImGui.Columns(4);
         ImGui.SetColumnWidth(0, 18 + (5 * ImGuiHelpers.GlobalScale));
-        ImGui.SetColumnWidth(1, ImGui.GetWindowContentRegionMax().X - ImGui.GetWindowContentRegionMin().X - (18 + 16 + 14) - ((5 + 45 + 26) * ImGuiHelpers.GlobalScale));
+        ImGui.SetColumnWidth(1, ImGui.GetContentRegionAvail().X - (18 + 16 + 14) - ((5 + 45 + 26) * ImGuiHelpers.GlobalScale));
         ImGui.SetColumnWidth(2, 16 + (45 * ImGuiHelpers.GlobalScale));
         ImGui.SetColumnWidth(3, 14 + (26 * ImGuiHelpers.GlobalScale));
 
@@ -195,7 +195,7 @@ internal sealed class DevPluginsSettingsEntry : SettingsEntry
 
         if (!string.IsNullOrEmpty(this.devPluginLocationAddError))
         {
-            ImGui.TextColoredWrapped(new Vector4(1, 0, 0, 1), this.devPluginLocationAddError);
+            ImGuiHelpers.TextColoredWrapped(new Vector4(1, 0, 0, 1), this.devPluginLocationAddError);
         }
     }
 

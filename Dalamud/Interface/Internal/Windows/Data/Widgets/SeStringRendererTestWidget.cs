@@ -2,7 +2,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Data;
 using Dalamud.Game.Gui;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
@@ -22,6 +22,7 @@ using Lumina.Text;
 using Lumina.Text.Parse;
 using Lumina.Text.Payloads;
 using Lumina.Text.ReadOnly;
+using FFXIVClientStructs.Interop;
 
 namespace Dalamud.Interface.Internal.Windows.Data.Widgets;
 
@@ -76,15 +77,15 @@ internal unsafe class SeStringRendererTestWidget : IDataWindowWidget
             this.style.ForceEdgeColor = t;
 
         t2 = ImGui.ColorConvertU32ToFloat4(this.style.ShadowColor ??= 0xFF000000u);
-        if (ImGui.ColorEdit4("Shadow Color"u8, ref t2))
+        if (ImGui.ColorEdit4("Shadow Color", ref t2, ImGuiColorEditFlags.None))
             this.style.ShadowColor = ImGui.ColorConvertFloat4ToU32(t2);
 
         t2 = ImGui.ColorConvertU32ToFloat4(this.style.LinkHoverBackColor ??= ImGui.GetColorU32(ImGuiCol.ButtonHovered));
-        if (ImGui.ColorEdit4("Link Hover Color"u8, ref t2))
+        if (ImGui.ColorEdit4("Link Hover Color", ref t2, ImGuiColorEditFlags.None))
             this.style.LinkHoverBackColor = ImGui.ColorConvertFloat4ToU32(t2);
 
         t2 = ImGui.ColorConvertU32ToFloat4(this.style.LinkActiveBackColor ??= ImGui.GetColorU32(ImGuiCol.ButtonActive));
-        if (ImGui.ColorEdit4("Link Active Color"u8, ref t2))
+        if (ImGui.ColorEdit4("Link Active Color", ref t2, ImGuiColorEditFlags.None))
             this.style.LinkActiveBackColor = ImGui.ColorConvertFloat4ToU32(t2);
 
         var t3 = this.style.LineHeight ??= 1f;
@@ -122,7 +123,7 @@ internal unsafe class SeStringRendererTestWidget : IDataWindowWidget
         var t4 = this.style.ThemeIndex ?? AtkStage.Instance()->AtkUIColorHolder->ActiveColorThemeType;
         using (ImRaii.ItemWidth(ImGui.CalcTextSize("WWWWWWWWWWWWWW"u8).X))
         {
-            if (ImGui.Combo("##theme", ref t4, ThemeNames))
+            if (ImGui.Combo("##theme", ref t4, ThemeNames, ThemeNames.Length))
                 this.style.ThemeIndex = t4;
         }
 
@@ -304,8 +305,9 @@ internal unsafe class SeStringRendererTestWidget : IDataWindowWidget
         {
             if (ImGui.InputTextMultiline(
                     labelPtr,
-                    this.testStringBuffer.StorageSpan,
-                    new(ImGui.GetContentRegionAvail().X, ImGui.GetTextLineHeight() * 3)))
+                    this.testStringBuffer.StorageSpan.GetPointer(0),
+                    (uint)this.testStringBuffer.StorageSpan.Length,
+                    new Vector2(ImGui.GetContentRegionAvail().X, ImGui.GetTextLineHeight() * 3)))
             {
                 var len = this.testStringBuffer.StorageSpan.IndexOf((byte)0);
                 if (len + 4 >= this.testStringBuffer.Capacity)

@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Utility;

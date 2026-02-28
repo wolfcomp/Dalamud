@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 
 using FFXIVClientStructs.FFXIV.Component.GUI;
 

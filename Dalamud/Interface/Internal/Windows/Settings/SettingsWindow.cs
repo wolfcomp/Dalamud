@@ -3,7 +3,7 @@ using System.Numerics;
 
 using CheapLoc;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Configuration.Internal;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Internal.Windows.Settings.Tabs;
@@ -235,7 +235,7 @@ internal sealed class SettingsWindow : Window
                     using var tabChild = ImRaii.Child(
                         $"###settings_scrolling_{settingsTab.Title}",
                         new Vector2(-1, -1),
-                        true);
+                        ImGuiChildFlags.Borders);
                     if (tabChild)
                         settingsTab.Draw();
                 }
@@ -307,7 +307,7 @@ internal sealed class SettingsWindow : Window
         if (!configuration.IsGamepadNavigationEnabled)
         {
             ImGui.GetIO().BackendFlags &= ~ImGuiBackendFlags.HasGamepad;
-            ImGui.GetIO().ConfigFlags &= ~ImGuiConfigFlags.NavEnableSetMousePos;
+            ImGui.GetIO().ConfigNavMoveSetMousePos = false;
 
             var di = Service<DalamudInterface>.Get();
             di.CloseGamepadModeNotifierWindow();
@@ -315,7 +315,7 @@ internal sealed class SettingsWindow : Window
         else
         {
             ImGui.GetIO().BackendFlags |= ImGuiBackendFlags.HasGamepad;
-            ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.NavEnableSetMousePos;
+            ImGui.GetIO().ConfigNavMoveSetMousePos = true;
         }
 
         configuration.QueueSave();

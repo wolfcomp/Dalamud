@@ -1,4 +1,4 @@
-﻿using Dalamud.Bindings.ImGui;
+﻿using Hexa.NET.ImGui;
 using Dalamud.Game.Config;
 using Dalamud.Plugin.SelfTest;
 

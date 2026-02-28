@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Threading;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Hooking;
 using Dalamud.Interface.Components;
 using Dalamud.Interface.Utility.Raii;

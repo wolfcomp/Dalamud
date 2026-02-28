@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Configuration.Internal;
 using Dalamud.Interface.FontIdentifier;
 using Dalamud.Interface.GameFonts;
@@ -134,10 +134,6 @@ internal sealed partial class FontAtlasFactory
             this.FontScaleModes.GetValueOrDefault(fontPtr, FontScaleMode.Default);
 
         /// <inheritdoc/>
-        public int StoreTexture(IDalamudTextureWrap textureWrap, bool disposeOnError) =>
-            this.data.AddNewTexture(textureWrap, disposeOnError);
-
-        /// <inheritdoc/>
         public void RegisterPostBuild(Action action) => this.registeredPostBuildActions.Add(action);
 
         /// <inheritdoc/>
@@ -172,7 +168,7 @@ internal sealed partial class FontAtlasFactory
                 if (fontConfig.GlyphRanges is not { Length: > 0 } ranges)
                     ranges = [1, 0xFFFE, 0];
 
-                raw.GlyphRanges = (ushort*)this.DisposeAfterBuild(
+                raw.GlyphRanges = (uint*)this.DisposeAfterBuild(
                     GCHandle.Alloc(ranges, GCHandleType.Pinned)).AddrOfPinnedObject();
 
                 TrueTypeUtils.CheckImGuiCompatibleOrThrow(raw);
@@ -690,87 +686,82 @@ internal sealed partial class FontAtlasFactory
                 var bpp = use4 ? 2 : 4;
                 var width = this.NewImAtlas.TexWidth;
                 var height = this.NewImAtlas.TexHeight;
-                var textureSpan = this.data.ImTextures.DataSpan;
-                for (var i = 0; i < textureSpan.Length; i++)
+                var texture = this.NewImAtlas;
+                var name =
+                    $"{nameof(FontAtlasBuiltData)}[{this.data.Owner?.Name ?? "-"}][0x{(long)this.data.Atlas.Handle:X}]";
+                if (!texture.TexID.IsNull)
                 {
-                    ref var texture = ref textureSpan[i];
-                    var name =
-                        $"{nameof(FontAtlasBuiltData)}[{this.data.Owner?.Name ?? "-"}][0x{(long)this.data.Atlas.Handle:X}][{i}]";
-                    if (!texture.TexID.IsNull)
-                    {
-                        // Nothing to do
-                    }
-                    else if (texture.TexPixelsRGBA32 is not null)
-                    {
-                        var wrap = this.factory.TextureManager.CreateFromRaw(
-                            RawImageSpecification.Rgba32(width, height),
-                            new(texture.TexPixelsRGBA32, width * height * 4),
-                            name);
-                        this.factory.TextureManager.Blame(wrap, this.data.Owner?.OwnerPlugin);
-                        this.data.AddExistingTexture(wrap);
-                        texture.TexID = wrap.Handle;
-                    }
-                    else if (texture.TexPixelsAlpha8 is not null)
-                    {
-                        var numPixels = width * height;
-                        if (buf.Length < numPixels * bpp)
-                        {
-                            ArrayPool<byte>.Shared.Return(buf);
-                            buf = ArrayPool<byte>.Shared.Rent(numPixels * bpp);
-                        }
-
-                        fixed (void* pBuf = buf)
-                        {
-                            var sourcePtr = texture.TexPixelsAlpha8;
-                            if (use4)
-                            {
-                                var target = (ushort*)pBuf;
-                                while (numPixels-- > 0)
-                                {
-                                    *target = (ushort)((*sourcePtr << 8) | 0x0FFF);
-                                    target++;
-                                    sourcePtr++;
-                                }
-                            }
-                            else
-                            {
-                                var target = (uint*)pBuf;
-                                while (numPixels-- > 0)
-                                {
-                                    *target = (uint)((*sourcePtr << 24) | 0x00FFFFFF);
-                                    target++;
-                                    sourcePtr++;
-                                }
-                            }
-                        }
-
-                        var wrap = this.factory.TextureManager.CreateFromRaw(
-                            new(
-                                width,
-                                height,
-                                (int)(use4 ? DXGI_FORMAT.DXGI_FORMAT_B4G4R4A4_UNORM : DXGI_FORMAT.DXGI_FORMAT_B8G8R8A8_UNORM),
-                                width * bpp),
-                            buf,
-                            name);
-                        this.factory.TextureManager.Blame(wrap, this.data.Owner?.OwnerPlugin);
-                        this.data.AddExistingTexture(wrap);
-                        texture.TexID = wrap.Handle;
-                        continue;
-                    }
-                    else
-                    {
-                        Log.Warning(
-                            "[{name}]: TexID, TexPixelsRGBA32, and TexPixelsAlpha8 are all null",
-                            this.data.Owner?.Name ?? "(error)");
-                    }
-
-                    if (texture.TexPixelsRGBA32 is not null)
-                        ImGui.MemFree(texture.TexPixelsRGBA32);
-                    if (texture.TexPixelsAlpha8 is not null)
-                        ImGui.MemFree(texture.TexPixelsAlpha8);
-                    texture.TexPixelsRGBA32 = null;
-                    texture.TexPixelsAlpha8 = null;
+                    // Nothing to do
                 }
+                else if (texture.TexPixelsRGBA32 is not null)
+                {
+                    var wrap = this.factory.TextureManager.CreateFromRaw(
+                        RawImageSpecification.Rgba32(width, height),
+                        new(texture.TexPixelsRGBA32, width * height * 4),
+                        name);
+                    this.factory.TextureManager.Blame(wrap, this.data.Owner?.OwnerPlugin);
+                    this.data.AddExistingTexture(wrap);
+                    texture.TexID = wrap.Handle;
+                }
+                else if (texture.TexPixelsAlpha8 is not null)
+                {
+                    var numPixels = width * height;
+                    if (buf.Length < numPixels * bpp)
+                    {
+                        ArrayPool<byte>.Shared.Return(buf);
+                        buf = ArrayPool<byte>.Shared.Rent(numPixels * bpp);
+                    }
+
+                    fixed (void* pBuf = buf)
+                    {
+                        var sourcePtr = texture.TexPixelsAlpha8;
+                        if (use4)
+                        {
+                            var target = (ushort*)pBuf;
+                            while (numPixels-- > 0)
+                            {
+                                *target = (ushort)((*sourcePtr << 8) | 0x0FFF);
+                                target++;
+                                sourcePtr++;
+                            }
+                        }
+                        else
+                        {
+                            var target = (uint*)pBuf;
+                            while (numPixels-- > 0)
+                            {
+                                *target = (uint)((*sourcePtr << 24) | 0x00FFFFFF);
+                                target++;
+                                sourcePtr++;
+                            }
+                        }
+                    }
+
+                    var wrap = this.factory.TextureManager.CreateFromRaw(
+                        new(
+                            width,
+                            height,
+                            (int)(use4 ? DXGI_FORMAT.DXGI_FORMAT_B4G4R4A4_UNORM : DXGI_FORMAT.DXGI_FORMAT_B8G8R8A8_UNORM),
+                            width * bpp),
+                        buf,
+                        name);
+                    this.factory.TextureManager.Blame(wrap, this.data.Owner?.OwnerPlugin);
+                    this.data.AddExistingTexture(wrap);
+                    texture.TexID = wrap.Handle;
+                }
+                else
+                {
+                    Log.Warning(
+                        "[{name}]: TexID, TexPixelsRGBA32, and TexPixelsAlpha8 are all null",
+                        this.data.Owner?.Name ?? "(error)");
+                }
+
+                if (texture.TexPixelsRGBA32 is not null)
+                    ImGui.MemFree(texture.TexPixelsRGBA32);
+                if (texture.TexPixelsAlpha8 is not null)
+                    ImGui.MemFree(texture.TexPixelsAlpha8);
+                texture.TexPixelsRGBA32 = null;
+                texture.TexPixelsAlpha8 = null;
             }
             finally
             {

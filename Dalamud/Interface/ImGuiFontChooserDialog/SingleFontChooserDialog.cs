@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Configuration.Internal;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.FontIdentifier;
@@ -16,6 +17,7 @@ using Dalamud.Utility;
 
 using TerraFX.Interop.DirectX;
 using TerraFX.Interop.Windows;
+using FFXIVClientStructs.Interop;
 
 namespace Dalamud.Interface.ImGuiFontChooserDialog;
 
@@ -403,7 +405,7 @@ public sealed class SingleFontChooserDialog : IDisposable
         if (ImGui.BeginChild(
                 "##choicesBlock"u8,
                 bodySize with { X = bodySize.X - windowPad.X - actionSize.X },
-                false,
+                ImGuiChildFlags.None,
                 ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
         {
             this.DrawChoices();
@@ -463,7 +465,7 @@ public sealed class SingleFontChooserDialog : IDisposable
         if (ImGui.BeginChild(
                 "##tableContainer"u8,
                 tableSize,
-                false,
+                ImGuiChildFlags.None,
                 ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
             && ImGui.BeginTable("##table"u8, 3, ImGuiTableFlags.None))
         {
@@ -559,10 +561,15 @@ public sealed class SingleFontChooserDialog : IDisposable
             ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
             using (this.fontHandle?.Push())
             {
-                ImGui.InputTextMultiline(
-                    "##fontPreviewText"u8,
-                    this.fontPreviewText,
-                    ImGui.GetContentRegionAvail());
+                var fontPreviewTextSpan = this.fontPreviewText.AsSpan();
+                unsafe
+                {
+                    ImGui.InputTextMultiline(
+                        "##fontPreviewText"u8,
+                        fontPreviewTextSpan.GetPointer(0),
+                        (ulong)fontPreviewTextSpan.Length,
+                        ImGui.GetContentRegionAvail());
+                }
             }
         }
     }
@@ -598,15 +605,15 @@ public sealed class SingleFontChooserDialog : IDisposable
                 ref this.familySearch,
                 255,
                 ImGuiInputTextFlags.AutoSelectAll | ImGuiInputTextFlags.CallbackHistory,
-                (ref ImGuiInputTextCallbackData data) =>
+                (ImGuiInputTextCallbackData* data) =>
                 {
                     if (families.Count == 0)
                         return 0;
 
                     var baseIndex = this.selectedFamilyIndex;
-                    if (data.SelectionStart == 0 && data.SelectionEnd == data.BufTextLen)
+                    if (data->SelectionStart == 0 && data->SelectionEnd == data->BufTextLen)
                     {
-                        switch (data.EventKey)
+                        switch (data->EventKey)
                         {
                             case ImGuiKey.DownArrow:
                                 this.selectedFamilyIndex = (this.selectedFamilyIndex + 1) % families.Count;
@@ -622,13 +629,13 @@ public sealed class SingleFontChooserDialog : IDisposable
                         if (changed)
                         {
                             ImGuiHelpers.SetTextFromCallback(
-                                ref data,
+                                ref Unsafe.AsRef<ImGuiInputTextCallbackData>(data),
                                 this.ExtractName(families[this.selectedFamilyIndex]));
                         }
                     }
                     else
                     {
-                        switch (data.EventKey)
+                        switch (data->EventKey)
                         {
                             case ImGuiKey.DownArrow:
                                 this.selectedFamilyIndex = families.FindIndex(
@@ -704,7 +711,7 @@ public sealed class SingleFontChooserDialog : IDisposable
                     if (ImGui.Selectable(
                             this.ExtractName(families[i]),
                             ref selected,
-                            ImGuiSelectableFlags.DontClosePopups))
+                            ImGuiSelectableFlags.NoAutoClosePopups))
                     {
                         this.selectedFamilyIndex = families.IndexOf(families[i]);
                         this.familySearch = this.ExtractName(families[i]);
@@ -766,15 +773,15 @@ public sealed class SingleFontChooserDialog : IDisposable
                 ref this.fontSearch,
                 255,
                 ImGuiInputTextFlags.AutoSelectAll | ImGuiInputTextFlags.CallbackHistory,
-                (ref ImGuiInputTextCallbackData data) =>
+                (ImGuiInputTextCallbackData* data) =>
                 {
                     if (fonts.Count == 0)
                         return 0;
 
                     var baseIndex = this.selectedFontIndex;
-                    if (data.SelectionStart == 0 && data.SelectionEnd == data.BufTextLen)
+                    if (data->SelectionStart == 0 && data->SelectionEnd == data->BufTextLen)
                     {
-                        switch (data.EventKey)
+                        switch (data->EventKey)
                         {
                             case ImGuiKey.DownArrow:
                                 this.selectedFontIndex = (this.selectedFontIndex + 1) % fonts.Count;
@@ -789,13 +796,13 @@ public sealed class SingleFontChooserDialog : IDisposable
                         if (changed)
                         {
                             ImGuiHelpers.SetTextFromCallback(
-                                ref data,
+                                ref Unsafe.AsRef<ImGuiInputTextCallbackData>(data),
                                 this.ExtractName(fonts[this.selectedFontIndex]));
                         }
                     }
                     else
                     {
-                        switch (data.EventKey)
+                        switch (data->EventKey)
                         {
                             case ImGuiKey.DownArrow:
                                 this.selectedFontIndex = fonts.FindIndex(
@@ -871,7 +878,7 @@ public sealed class SingleFontChooserDialog : IDisposable
                     if (ImGui.Selectable(
                             this.ExtractName(fonts[i]),
                             ref selected,
-                            ImGuiSelectableFlags.DontClosePopups))
+                            ImGuiSelectableFlags.NoAutoClosePopups))
                     {
                         this.selectedFontIndex = fonts.IndexOf(fonts[i]);
                         this.fontSearch = this.ExtractName(fonts[i]);
@@ -915,9 +922,9 @@ public sealed class SingleFontChooserDialog : IDisposable
                 255,
                 ImGuiInputTextFlags.AutoSelectAll | ImGuiInputTextFlags.CallbackHistory |
                 ImGuiInputTextFlags.CharsDecimal,
-                (ref ImGuiInputTextCallbackData data) =>
+                (ImGuiInputTextCallbackData* data) =>
                 {
-                    switch (data.EventKey)
+                    switch (data->EventKey)
                     {
                         case ImGuiKey.DownArrow:
                             this.selectedFont = this.selectedFont with
@@ -936,7 +943,7 @@ public sealed class SingleFontChooserDialog : IDisposable
                     }
 
                     if (changed)
-                        ImGuiHelpers.SetTextFromCallback(ref data, $"{this.selectedFont.SizePt:0.##}");
+                        ImGuiHelpers.SetTextFromCallback(ref Unsafe.AsRef<ImGuiInputTextCallbackData>(data), $"{this.selectedFont.SizePt:0.##}");
 
                     return 0;
                 }))
@@ -975,7 +982,7 @@ public sealed class SingleFontChooserDialog : IDisposable
                     if (ImGui.Selectable(
                             FontSizeList[i].Name,
                             ref selected,
-                            ImGuiSelectableFlags.DontClosePopups))
+                            ImGuiSelectableFlags.NoAutoClosePopups))
                     {
                         this.selectedFont = this.selectedFont with { SizePt = FontSizeList[i].Value };
                         this.setFocusOn = 2;
@@ -1119,19 +1126,21 @@ public sealed class SingleFontChooserDialog : IDisposable
                 255,
                 ImGuiInputTextFlags.AutoSelectAll | ImGuiInputTextFlags.CallbackHistory |
                 ImGuiInputTextFlags.CharsDecimal,
-                (ref ImGuiInputTextCallbackData data) =>
+                (ImGuiInputTextCallbackData* data) =>
                 {
-                    switch (data.EventKey)
+                    ref var refData = ref Unsafe.AsRef<ImGuiInputTextCallbackData>(data);
+
+                    switch (data->EventKey)
                     {
                         case ImGuiKey.DownArrow:
                             changed2 = true;
                             value = Math.Min(max, (MathF.Round(value / step) * step) + step);
-                            ImGuiHelpers.SetTextFromCallback(ref data, $"{value:0.##}");
+                            ImGuiHelpers.SetTextFromCallback(ref refData, $"{value:0.##}");
                             break;
                         case ImGuiKey.UpArrow:
                             changed2 = true;
                             value = Math.Max(min, (MathF.Round(value / step) * step) - step);
-                            ImGuiHelpers.SetTextFromCallback(ref data, $"{value:0.##}");
+                            ImGuiHelpers.SetTextFromCallback(ref refData, $"{value:0.##}");
                             break;
                     }
 

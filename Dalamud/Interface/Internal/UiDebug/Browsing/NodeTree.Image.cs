@@ -1,15 +1,15 @@
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Utility.Raii;
 
 using FFXIVClientStructs.FFXIV.Client.Graphics.Kernel;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 
-using static Dalamud.Bindings.ImGui.ImGuiTableColumnFlags;
-using static Dalamud.Bindings.ImGui.ImGuiTableFlags;
-using static Dalamud.Bindings.ImGui.ImGuiTreeNodeFlags;
+using static Hexa.NET.ImGui.ImGuiTableColumnFlags;
+using static Hexa.NET.ImGui.ImGuiTableFlags;
+using static Hexa.NET.ImGui.ImGuiTreeNodeFlags;
 using static Dalamud.Interface.ColorHelpers;
 using static Dalamud.Interface.Internal.UiDebug.Utility.Gui;
 using static Dalamud.Utility.Util;
@@ -171,7 +171,7 @@ internal unsafe partial class ImageNodeTree : ResNodeTree
         var cursorScreenPos = ImGui.GetCursorScreenPos();
         var cursorLocalPos = ImGui.GetCursorPos();
 
-        ImGui.Image(new(this.TexData.Texture->D3D11ShaderResourceView), new(this.TexData.Texture->ActualWidth, this.TexData.Texture->ActualHeight));
+        ImGui.Image(new((nint)this.TexData.Texture->D3D11ShaderResourceView), new(this.TexData.Texture->ActualWidth, this.TexData.Texture->ActualHeight));
 
         for (uint p = 0; p < this.TexData.PartsList->PartCount; p++)
         {
@@ -219,7 +219,7 @@ internal unsafe partial class ImageNodeTree : ResNodeTree
                 var height = hiRes ? part.Height * 2f : part.Height;
 
                 ImGui.Image(
-                    new(this.TexData.Texture->D3D11ShaderResourceView),
+                    new((nint)this.TexData.Texture->D3D11ShaderResourceView),
                     new(width, height),
                     new Vector2(u, v) / textureSize,
                     new Vector2(u + width, v + height) / textureSize);

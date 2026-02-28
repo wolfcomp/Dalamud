@@ -1,6 +1,6 @@
 using System.Numerics;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.ImGuiNotification;
 using Dalamud.Interface.ImGuiNotification.Internal;
 
@@ -49,7 +49,7 @@ internal static class DataWindowWidgetExtensions
         {
             ImGui.SetClipboardText(s);
             Service<NotificationManager>.Get().AddNotification(
-                $"Copied {ImGui.TableGetColumnName()} to clipboard.",
+                $"Copied {ImGui.TableGetColumnNameS()} to clipboard.",
                 widget.DisplayName,
                 NotificationType.Success);
         }

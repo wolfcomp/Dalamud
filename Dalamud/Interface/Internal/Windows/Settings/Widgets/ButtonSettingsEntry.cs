@@ -1,7 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Colors;
+using Dalamud.Interface.Utility;
 using Dalamud.Utility.Internal;
 
 namespace Dalamud.Interface.Internal.Windows.Settings.Widgets;
@@ -31,11 +32,11 @@ internal sealed class ButtonSettingsEntry : SettingsEntry
 
     public override void Draw()
     {
-        if (ImGui.Button(this.Name))
+        if (ImGui.Button((ImU8String)this.Name))
         {
             this.runs.Invoke();
         }
 
-        ImGui.TextColoredWrapped(ImGuiColors.DalamudGrey, this.description);
+        ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudGrey, this.description);
     }
 }

@@ -1,10 +1,10 @@
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 
 namespace Dalamud.Interface.Utility.Raii;
 
 // Push an arbitrary amount of ids into an object that are all popped when it is disposed.
 // If condition is false, no id is pushed.
-public static partial class ImRaii
+public static unsafe partial class ImRaii
 {
     public static Id PushId(ImU8String id, bool enabled = true)
         => enabled ? new Id().Push(id) : new Id();

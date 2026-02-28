@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Textures.TextureWraps.Internal;
 
 using TerraFX.Interop.Windows;

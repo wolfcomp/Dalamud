@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
@@ -70,7 +70,7 @@ public class BranchSwitcherWindow : Window
         var si = Service<Dalamud>.Get().StartInfo;
 
         var itemsArray = this.branches.Select(x => x.Key).ToArray();
-        ImGui.ListBox("Branch", ref this.selectedBranchIndex, itemsArray);
+        ImGui.ListBox("Branch", ref this.selectedBranchIndex, itemsArray, itemsArray.Length);
 
         var pickedBranch = this.branches.ElementAt(this.selectedBranchIndex);
 

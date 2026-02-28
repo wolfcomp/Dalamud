@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using CheapLoc;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Components;
@@ -497,11 +497,11 @@ public abstract class Window
 
         if (this.CanShowCloseButton ? ImGui.Begin(this.WindowName, ref this.internalIsOpen, flags) : ImGui.Begin(this.WindowName, flags))
         {
-            var context = ImGui.GetCurrentContext();
-            if (!context.IsNull)
-            {
-                ImGuiP.GetCurrentWindow().InheritNoInputs = this.internalIsClickthrough;
-            }
+            // var context = ImGui.GetCurrentContext();
+            // if (!context.IsNull)
+            // {
+            //     ImGuiP.GetCurrentWindow().InheritNoInputs = this.internalIsClickthrough;
+            // }
 
             if (ImGui.GetWindowViewport().ID != ImGui.GetMainViewport().ID)
             {
@@ -660,7 +660,7 @@ public abstract class Window
         {
             this.fadeOutTexture = Service<TextureManager>.Get().CreateDrawListTexture(
                 "WindowFadeOutTexture");
-            this.fadeOutTexture.ResizeAndDrawWindow(this.WindowName, Vector2.One);
+            this.fadeOutTexture.ResizeAndDrawWindow((ImU8String)this.WindowName, Vector2.One);
             this.fadeOutTimer = FadeInOutTime;
         }
 
@@ -668,7 +668,7 @@ public abstract class Window
         {
             var tex = Service<TextureManager>.Get().CreateDrawListTexture(
                 Loc.Localize("WindowSystemContextActionPrintWindow", "Print window"));
-            tex.ResizeAndDrawWindow(this.WindowName, Vector2.One);
+            tex.ResizeAndDrawWindow((ImU8String)this.WindowName, Vector2.One);
             _ = Service<DevTextureSaveMenu>.Get().ShowTextureSaveMenuAsync(
                 this.WindowName,
                 this.WindowName,
@@ -782,7 +782,7 @@ public abstract class Window
     {
         var window = ImGuiP.GetCurrentWindow();
         var flags = window.Flags;
-        var titleBarRect = window.TitleBarRect();
+        var titleBarRect = *ImGui.WindowTitleBarRect(window);
         ImGui.PushClipRect(ImGui.GetWindowPos(), ImGui.GetWindowPos() + ImGui.GetWindowSize(), false);
 
         var style = ImGui.GetStyle();
@@ -824,7 +824,7 @@ public abstract class Window
                 // ButtonBehavior does not function if the window is clickthrough, so we have to do it ourselves
                 var pad = ImGui.GetStyle().TouchExtraPadding;
                 var rect = new ImRect(pos - pad, max + pad);
-                hovered = rect.Contains(ImGui.GetMousePos());
+                hovered = ImGui.RectContains(&rect, ImGui.GetMousePos());
 
                 // Temporarily enable inputs
                 // This will be reset on next frame, and then enabled again if it is still being hovered
@@ -908,7 +908,7 @@ public abstract class Window
     private void DrawErrorMessage()
     {
         // TODO: Once window systems are services, offer to reload the plugin
-        ImGui.TextColoredWrapped(ImGuiColors.DalamudRed, Loc.Localize("WindowSystemErrorOccurred", "An error occurred while rendering this window. Please contact the developer for details."));
+        ImGuiHelpers.TextColoredWrapped(ImGuiColors.DalamudRed, Loc.Localize("WindowSystemErrorOccurred", "An error occurred while rendering this window. Please contact the developer for details."));
 
         ImGuiHelpers.ScaledDummy(5);
 
@@ -931,7 +931,7 @@ public abstract class Window
 
         if (this.lastError != null)
         {
-            using var child = ImRaii.Child("##ErrorDetails", new Vector2(0, 200 * ImGuiHelpers.GlobalScale), true);
+            using var child = ImRaii.Child("##ErrorDetails", new Vector2(0, 200 * ImGuiHelpers.GlobalScale), ImGuiChildFlags.Borders);
             using (ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudGrey))
             {
                 ImGui.TextWrapped(Loc.Localize("WindowSystemErrorDetails", "Error Details:"));

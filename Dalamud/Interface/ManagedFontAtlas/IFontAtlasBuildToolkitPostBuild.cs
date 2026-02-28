@@ -1,4 +1,4 @@
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.Textures.TextureWraps;
 
 namespace Dalamud.Interface.ManagedFontAtlas;
@@ -11,14 +11,6 @@ public interface IFontAtlasBuildToolkitPostBuild : IFontAtlasBuildToolkit
 {
     /// <inheritdoc cref="IFontAtlasBuildToolkitPreBuild.GetFontScaleMode"/>
     FontScaleMode GetFontScaleMode(ImFontPtr fontPtr);
-
-    /// <summary>
-    /// Stores a texture to be managed with the atlas.
-    /// </summary>
-    /// <param name="textureWrap">The texture wrap.</param>
-    /// <param name="disposeOnError">Dispose the wrap on error.</param>
-    /// <returns>The texture index.</returns>
-    int StoreTexture(IDalamudTextureWrap textureWrap, bool disposeOnError);
 
     /// <summary>
     /// Fits a font to a fixed 1:1 ratio adjusting glyph positions horizontally and vertically to fit within font size boundaries.

@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-using Dalamud.Bindings.ImGui;
+using Hexa.NET.ImGui;
 using Dalamud.Interface.ImGuiBackend.Helpers;
 using Dalamud.Interface.ImGuiBackend.Helpers.D3D11;
 using Dalamud.Interface.Textures;
@@ -241,7 +241,7 @@ internal unsafe partial class Dx11Renderer : IImGuiRenderer
         }
 
         // Stop if there's nothing to draw
-        var cmdLists = new Span<ImDrawListPtr>(drawData.Handle->CmdLists, drawData.Handle->CmdListsCount);
+        var cmdLists = new Span<ImDrawListPtr>(drawData.Handle->CmdLists.Data, drawData.Handle->CmdListsCount);
         if (cmdLists.IsEmpty)
             return;
 
@@ -303,8 +303,8 @@ internal unsafe partial class Dx11Renderer : IImGuiRenderer
             var targetIndices = new Span<ushort>(indexData.pData, this.indexBufferSize);
             foreach (ref var cmdList in cmdLists)
             {
-                var vertices = new ImVectorWrapper<ImDrawVert>(cmdList.Handle->VtxBuffer.ToUntyped());
-                var indices = new ImVectorWrapper<ushort>(cmdList.Handle->IdxBuffer.ToUntyped());
+                var vertices = new ImVectorWrapper<ImDrawVert>(&cmdList.Handle->VtxBuffer);
+                var indices = new ImVectorWrapper<ushort>(&cmdList.Handle->IdxBuffer);
 
                 vertices.DataSpan.CopyTo(targetVertices);
                 indices.DataSpan.CopyTo(targetIndices);
@@ -345,46 +345,39 @@ internal unsafe partial class Dx11Renderer : IImGuiRenderer
         var clipOff = new Vector4(drawData.DisplayPos, drawData.DisplayPos.X, drawData.DisplayPos.Y);
         foreach (ref var cmdList in cmdLists)
         {
-            var cmds = new ImVectorWrapper<ImDrawCmd>(cmdList.Handle->CmdBuffer.ToUntyped());
+            var cmds = new ImVectorWrapper<ImDrawCmd>(&cmdList.Handle->CmdBuffer);
             foreach (ref var cmd in cmds.DataSpan)
             {
-                switch ((ImDrawCallbackEnum)(nint)cmd.UserCallback)
+                if (cmd.UserCallback != null)
                 {
-                    case ImDrawCallbackEnum.Empty:
+                    if ((nint)cmd.UserCallback == ImGui.ImDrawCallbackResetRenderState)
                     {
-                        var clipV4 = cmd.ClipRect - clipOff;
-                        var clipRect = new RECT((int)clipV4.X, (int)clipV4.Y, (int)clipV4.Z, (int)clipV4.W);
-
-                        // Skip the draw if nothing would be visible
-                        if (clipRect.left >= clipRect.right || clipRect.top >= clipRect.bottom)
-                            continue;
-
-                        this.context.Get()->RSSetScissorRects(1, &clipRect);
-
-                        // Bind texture and draw
-                        var srv = (ID3D11ShaderResourceView*)cmd.TextureId.Handle;
-                        this.context.Get()->PSSetShaderResources(0, 1, &srv);
-                        this.context.Get()->DrawIndexed(
-                            cmd.ElemCount,
-                            (uint)(cmd.IdxOffset + indexOffset),
-                            (int)(cmd.VtxOffset + vertexOffset));
-                        break;
-                    }
-
-                    case ImDrawCallbackEnum.ResetRenderState:
-                    {
-                        // Special callback value used by the user to request the renderer to reset render state.
                         this.SetupRenderState(drawData);
-                        break;
                     }
-
-                    default:
+                    else
                     {
-                        // User callback, registered via ImDrawList::AddCallback()
                         var cb = (delegate* unmanaged<ImDrawListPtr, ImDrawCmdPtr, void>)cmd.UserCallback;
                         cb(cmdList, (ImDrawCmdPtr)Unsafe.AsPointer(ref cmd));
-                        break;
                     }
+                }
+                else
+                {
+                    var clipV4 = cmd.ClipRect - clipOff;
+                    var clipRect = new RECT((int)clipV4.X, (int)clipV4.Y, (int)clipV4.Z, (int)clipV4.W);
+
+                    // Skip the draw if nothing would be visible
+                    if (clipRect.left >= clipRect.right || clipRect.top >= clipRect.bottom)
+                        continue;
+
+                    this.context.Get()->RSSetScissorRects(1, &clipRect);
+
+                    // Bind texture and draw
+                    var srv = (ID3D11ShaderResourceView*)cmd.TextureId.Handle;
+                    this.context.Get()->PSSetShaderResources(0, 1, &srv);
+                    this.context.Get()->DrawIndexed(
+                        cmd.ElemCount,
+                        (uint)(cmd.IdxOffset + indexOffset),
+                        (int)(cmd.VtxOffset + vertexOffset));
                 }
             }
 
@@ -405,34 +398,27 @@ internal unsafe partial class Dx11Renderer : IImGuiRenderer
             return;
 
         var io = ImGui.GetIO();
-        if (io.Fonts.Textures.Size == 0)
+        if (!io.Fonts.TexReady)
             io.Fonts.Build();
 
-        for (int textureIndex = 0, textureCount = io.Fonts.Textures.Size;
-             textureIndex < textureCount;
-             textureIndex++)
-        {
-            int width = 0, height = 0, bytespp = 0;
-            byte* fontPixels = null;
+        int width = 0, height = 0, bytespp = 0;
+        byte* fontPixels = null;
 
-            // Build texture atlas
-            io.Fonts.GetTexDataAsRGBA32(
-                textureIndex,
-                &fontPixels,
-                ref width,
-                ref height,
-                ref bytespp);
+        // Build texture atlas
+        io.Fonts.GetTexDataAsRGBA32(
+            &fontPixels,
+            ref width,
+            ref height,
+            ref bytespp);
 
-            var tex = this.CreateTexture2D(
-                new(fontPixels, width * height * bytespp),
-                new(width, height, (int)DXGI_FORMAT.DXGI_FORMAT_R8G8B8A8_UNORM, width * bytespp),
-                false,
-                false,
-                false,
-                $"Font#{textureIndex}");
-            io.Fonts.SetTexID(textureIndex, tex.Handle);
-            this.fontTextures.Add(tex);
-        }
+        var tex = this.CreateTexture2D(
+            new(fontPixels, width * height * bytespp),
+            new(width, height, (int)DXGI_FORMAT.DXGI_FORMAT_R8G8B8A8_UNORM, width * bytespp),
+            false,
+            false,
+            false);
+        io.Fonts.SetTexID(tex.Handle);
+        this.fontTextures.Add(tex);
 
         io.Fonts.ClearTexData();
     }
@@ -663,8 +649,7 @@ internal unsafe partial class Dx11Renderer : IImGuiRenderer
         foreach (var fontResourceView in this.fontTextures)
             fontResourceView.Dispose();
 
-        foreach (var i in Enumerable.Range(0, io.Fonts.Textures.Size))
-            io.Fonts.SetTexID(i, ImTextureID.Null);
+        io.Fonts.SetTexID(ImTextureID.Null);
 
         this.device.Reset();
         this.context.Reset();
