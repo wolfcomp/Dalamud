@@ -291,7 +291,7 @@ internal class TexWidget : IDataWindowWidget
                 {
                     if (t.GetTexture(this.textureManager) is { } source)
                     {
-                        var psrv = (ID3D11ShaderResourceView*)source.Handle.Handle;
+                        var psrv = (ID3D11ShaderResourceView*)source.Handle.TexID;
                         var rcsrv = psrv->AddRef() - 1;
                         psrv->Release();
 
@@ -356,7 +356,7 @@ internal class TexWidget : IDataWindowWidget
 
         const int numIcons = 1;
         float iconWidths;
-        using (im.IconFontHandle?.Push())
+        using (im.IconFontHandle?.Push(0))
         {
             iconWidths = ImGui.CalcTextSize(FontAwesomeIcon.Save.ToIconString()).X;
         }
@@ -466,7 +466,7 @@ internal class TexWidget : IDataWindowWidget
                 {
                     _ = Service<DevTextureSaveMenu>.Get().ShowTextureSaveMenuAsync(
                         this.DisplayName,
-                        $"{wrap.Handle.Handle:X16}",
+                        $"{wrap.Handle.TexID:X16}",
                         Task.FromResult(wrap.CreateWrapSharingLowLevelResource()));
                 }
 
@@ -512,7 +512,7 @@ internal class TexWidget : IDataWindowWidget
 
         const int numIcons = 4;
         float iconWidths;
-        using (im.IconFontHandle?.Push())
+        using (im.IconFontHandle?.Push(0))
         {
             iconWidths = ImGui.CalcTextSize(FontAwesomeIcon.Save.ToIconString()).X;
             iconWidths += ImGui.CalcTextSize(FontAwesomeIcon.Sync.ToIconString()).X;

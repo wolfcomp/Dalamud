@@ -594,7 +594,7 @@ internal class DalamudInterface : IInternalDisposableService
             this.WindowSystem.Draw();
 
             if (this.isImGuiTestWindowsInMonospace)
-                ImGui.PushFont(InterfaceManager.MonoFont);
+                ImGui.PushFont(InterfaceManager.MonoFont, 0);
 
             if (this.isImGuiDrawDemoWindow)
                 ImGui.ShowDemoWindow(ref this.isImGuiDrawDemoWindow);
@@ -1162,7 +1162,7 @@ internal class DalamudInterface : IInternalDisposableService
 
                 if (this.configuration.ShowDevBarInfo)
                 {
-                    ImGui.PushFont(InterfaceManager.MonoFont);
+                    ImGui.PushFont(InterfaceManager.MonoFont, 0);
 
                     ImGui.BeginMenu($"{Versioning.GetActiveTrack() ?? "???"} on {Versioning.GetGitBranch() ?? "???"}", false);
                     ImGui.BeginMenu($"{Versioning.GetScmVersion()}", false);

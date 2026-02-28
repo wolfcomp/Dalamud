@@ -183,7 +183,7 @@ internal class ConsoleWindow : Window, IDisposable
 
         ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, Vector2.Zero);
 
-        ImGui.PushFont(InterfaceManager.MonoFont);
+        ImGui.PushFont(InterfaceManager.MonoFont, 0);
 
         var childPos = ImGui.GetWindowPos();
         var childDrawList = ImGui.GetWindowDrawList();
@@ -1116,32 +1116,35 @@ internal class ConsoleWindow : Window, IDisposable
         var drawList = ImGui.GetWindowDrawList().Handle;
         var font = ImGui.GetFont();
         var size = ImGui.GetFontSize();
-        var scale = size / font.FontSize;
-        var hotData = font.IndexedHotDataWrapped();
-        var lookup = font.IndexLookupWrapped();
-        var kern = (ImGui.GetIO().ConfigFlags & ImGuiConfigFlags.NoKerning) == 0;
-        var lastc = '\0';
-        for (var i = 0; i < charOffsetsIndex - 1; i++)
-        {
-            var begin = charOffsets[i];
-            var end = charOffsets[i + 1];
-            if (begin == end)
-                continue;
+        var scale = size;
 
-            for (var j = begin; j < end; j++)
-            {
-                var currc = line[j];
-                if (currc >= lookup.Length || lookup[currc] == ushort.MaxValue)
-                    currc = (char)font.FallbackChar;
+        // TODO: Figure out the new font logic stuff
 
-                if (kern)
-                    screenPos.X += scale * ImGui.GetFont().GetDistanceAdjustmentForPair(lastc, currc);
-                font.RenderChar(drawList, size, screenPos, i % 2 == 1 ? highlightCol : col, currc);
-
-                screenPos.X += scale * hotData[currc].AdvanceX;
-                lastc = currc;
-            }
-        }
+        // var hotData = font.IndexedHotDataWrapped();
+        // var lookup = font.IndexLookupWrapped();
+        // var kern = (ImGui.GetIO().ConfigFlags & ImGuiConfigFlags.NoKerning) == 0;
+        // var lastc = '\0';
+        // for (var i = 0; i < charOffsetsIndex - 1; i++)
+        // {
+        //     var begin = charOffsets[i];
+        //     var end = charOffsets[i + 1];
+        //     if (begin == end)
+        //         continue;
+        //
+        //     for (var j = begin; j < end; j++)
+        //     {
+        //         var currc = line[j];
+        //         if (currc >= lookup.Length || lookup[currc] == ushort.MaxValue)
+        //             currc = (char)font.FallbackChar;
+        //
+        //         // if (kern)
+        //         //     screenPos.X += scale * ImGui.GetFont().GetDistanceAdjustmentForPair(lastc, currc);
+        //         font.RenderChar(drawList, size, screenPos, i % 2 == 1 ? highlightCol : col, currc);
+        //
+        //         // screenPos.X += scale * hotData[currc].AdvanceX;
+        //         lastc = currc;
+        //     }
+        // }
 
         ImGui.Dummy(screenPos - ImGui.GetCursorScreenPos());
     }

@@ -108,44 +108,47 @@ public record SingleFontSpec : IFontSpec
         tk.RegisterPostBuild(
             () =>
             {
+                // TODO: Figure out new font size stuffs
+
                 // Multiplication by scale will be done with global scale, outside of this handling.
-                var scale = tk.GetFontScaleMode(font) == FontScaleMode.UndoGlobalScale ? 1 / tk.Scale : 1;
-                var roundUnit = tk.GetFontScaleMode(font) == FontScaleMode.SkipHandling ? 1 : 1 / tk.Scale;
-                var newAscent = MathF.Round((font.Ascent * this.LineHeight) / roundUnit) * roundUnit;
-                var newFontSize = MathF.Round((font.FontSize * this.LineHeight) / roundUnit) * roundUnit;
-                var shiftDown = MathF.Round((newFontSize - font.FontSize) / 2f / roundUnit) * roundUnit;
+                // var scale = tk.GetFontScaleMode(font) == FontScaleMode.UndoGlobalScale ? 1 / tk.Scale : 1;
+                // var roundUnit = tk.GetFontScaleMode(font) == FontScaleMode.SkipHandling ? 1 : 1 / tk.Scale;
 
-                font.Ascent = newAscent;
-                font.FontSize = newFontSize;
-                font.Descent = newFontSize - font.Ascent;
+                // var newAscent = MathF.Round((font.Ascent * this.LineHeight) / roundUnit) * roundUnit;
+                // var newFontSize = MathF.Round((font.FontSize * this.LineHeight) / roundUnit) * roundUnit;
+                // var shiftDown = MathF.Round((newFontSize - font.FontSize) / 2f / roundUnit) * roundUnit;
+                //
+                // font.Ascent = newAscent;
+                // font.FontSize = newFontSize;
+                // font.Descent = newFontSize - font.Ascent;
 
-                var lookup = new BitArray(ushort.MaxValue + 1, this.GlyphRanges is null);
-                if (this.GlyphRanges is not null)
-                {
-                    for (var i = 0; i < this.GlyphRanges.Length && this.GlyphRanges[i] != 0; i += 2)
-                    {
-                        var to = (int)this.GlyphRanges[i + 1];
-                        for (var j = this.GlyphRanges[i]; j <= to; j++)
-                            lookup[j] = true;
-                    }
-                }
+                // var lookup = new BitArray(ushort.MaxValue + 1, this.GlyphRanges is null);
+                // if (this.GlyphRanges is not null)
+                // {
+                //     for (var i = 0; i < this.GlyphRanges.Length && this.GlyphRanges[i] != 0; i += 2)
+                //     {
+                //         var to = (int)this.GlyphRanges[i + 1];
+                //         for (var j = this.GlyphRanges[i]; j <= to; j++)
+                //             lookup[j] = true;
+                //     }
+                // }
 
-                var dax = MathF.Round((this.LetterSpacing * scale) / roundUnit) * roundUnit;
-                var dxy0 = this.GlyphOffset * scale;
-                dxy0 /= roundUnit;
-                dxy0 = new(MathF.Round(dxy0.X), MathF.Round(dxy0.Y));
-                dxy0 *= roundUnit;
+                // var dax = MathF.Round((this.LetterSpacing * scale) / roundUnit) * roundUnit;
+                // var dxy0 = this.GlyphOffset * scale;
+                // dxy0 /= roundUnit;
+                // dxy0 = new(MathF.Round(dxy0.X), MathF.Round(dxy0.Y));
+                // dxy0 *= roundUnit;
 
-                dxy0.Y += shiftDown;
-                var dxy = new Vector4(dxy0, dxy0.X, dxy0.Y);
-                foreach (ref var glyphReal in font.GlyphsWrapped().DataSpan)
-                {
-                    if (!lookup[glyphReal.Codepoint])
-                        continue;
-
-                    glyphReal.XY += dxy;
-                    glyphReal.AdvanceX += dax;
-                }
+                // dxy0.Y += shiftDown;
+                // var dxy = new Vector4(dxy0, dxy0.X, dxy0.Y);
+                // foreach (ref var glyphReal in font.GlyphsWrapped().DataSpan)
+                // {
+                //     if (!lookup[glyphReal.Codepoint])
+                //         continue;
+                //
+                //     glyphReal.XY += dxy;
+                //     glyphReal.AdvanceX += dax;
+                // }
             });
 
         return font;

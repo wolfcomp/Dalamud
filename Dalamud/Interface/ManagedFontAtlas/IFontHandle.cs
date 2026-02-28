@@ -1,4 +1,4 @@
-﻿using System.Threading;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Hexa.NET.ImGui;
@@ -68,10 +68,11 @@ public interface IFontHandle : IDisposable
     /// Use <see cref="ImGui.GetFont"/> to access the current font.<br />
     /// You may not access the font once you dispose this object.
     /// </summary>
+    /// <param name="fontSizeBaseUnscaled">The font size to use</param>
     /// <returns>A disposable object that will pop the font on dispose.</returns>
     /// <exception cref="InvalidOperationException">If called outside the main thread.</exception>
     /// <remarks>
-    /// <para>This function uses <see cref="ImGui.PushFont(ImFontPtr)"/>, and may do extra things.
+    /// <para>This function uses <see cref="ImGui.PushFont(ImFontPtr, float)"/>, and may do extra things.
     /// Use <see cref="IDisposable.Dispose"/> or <see cref="Pop"/> to undo this operation.
     /// Do not use <see cref="ImGui.PopFont"/>.</para>
     /// </remarks>
@@ -93,7 +94,7 @@ public interface IFontHandle : IDisposable
     ///     ImGui.Text("Test 3"u8);
     /// </code>
     /// </example>
-    IDisposable Push();
+    IDisposable Push(float fontSizeBaseUnscaled);
 
     /// <summary>
     /// Pops the font pushed to ImGui using <see cref="Push"/>, cleaning up any extra information as needed.

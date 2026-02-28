@@ -203,7 +203,9 @@ internal sealed partial class FontAtlasFactory
                     if (!ImGuiHelpers.IsCodepointInSuppliedGlyphRangesUnsafe(pair.Right, raw.GlyphRanges))
                         continue;
 
-                    font.AddKerningPair(pair.Left, pair.Right, pair.Distance * raw.SizePixels);
+                    // TODO: Figure out how to do kerning with new font system
+
+                    // font.AddKerningPair(pair.Left, pair.Right, pair.Distance * raw.SizePixels);
                 }
 
                 return font;
@@ -628,8 +630,9 @@ internal sealed partial class FontAtlasFactory
                     new() { GlyphRanges = [' ', ' ', '\0'], SizePx = 1 });
             }
 
-            if (!this.NewImAtlas.Build())
-                throw new InvalidOperationException("ImFontAtlas.Build failed");
+            // TODO: Build shouldn't be needed for the new font system.
+            // if (!this.NewImAtlas.Build())
+            //     throw new InvalidOperationException("ImFontAtlas.Build failed");
 
             this.BuildStep = FontAtlasBuildStep.PostBuild;
         }
@@ -642,25 +645,27 @@ internal sealed partial class FontAtlasFactory
                 if (this.GetFontScaleMode(font) != FontScaleMode.SkipHandling)
                     font.AdjustGlyphMetrics(1 / scale, 1 / scale);
 
-                foreach (var c in FallbackCodepoints)
-                {
-                    var g = font.FindGlyphNoFallback(c);
-                    if (g == null)
-                        continue;
+                // TODO: Figure out how to do this with the new font system
 
-                    font.UpdateFallbackChar(c);
-                    break;
-                }
-
-                foreach (var c in EllipsisCodepoints)
-                {
-                    var g = font.FindGlyphNoFallback(c);
-                    if (g == null)
-                        continue;
-
-                    font.EllipsisChar = c;
-                    break;
-                }
+                // foreach (var c in FallbackCodepoints)
+                // {
+                //     var g = font.FindGlyphNoFallback(c);
+                //     if (g == null)
+                //         continue;
+                //
+                //     font.UpdateFallbackChar(c);
+                //     break;
+                // }
+                //
+                // foreach (var c in EllipsisCodepoints)
+                // {
+                //     var g = font.FindGlyphNoFallback(c);
+                //     if (g == null)
+                //         continue;
+                //
+                //     font.EllipsisChar = c;
+                //     break;
+                // }
             }
         }
 
@@ -684,84 +689,86 @@ internal sealed partial class FontAtlasFactory
             {
                 var use4 = this.factory.TextureManager.IsDxgiFormatSupported(DXGI_FORMAT.DXGI_FORMAT_B4G4R4A4_UNORM);
                 var bpp = use4 ? 2 : 4;
-                var width = this.NewImAtlas.TexWidth;
-                var height = this.NewImAtlas.TexHeight;
-                var texture = this.NewImAtlas;
-                var name =
-                    $"{nameof(FontAtlasBuiltData)}[{this.data.Owner?.Name ?? "-"}][0x{(long)this.data.Atlas.Handle:X}]";
-                if (!texture.TexID.IsNull)
-                {
-                    // Nothing to do
-                }
-                else if (texture.TexPixelsRGBA32 is not null)
-                {
-                    var wrap = this.factory.TextureManager.CreateFromRaw(
-                        RawImageSpecification.Rgba32(width, height),
-                        new(texture.TexPixelsRGBA32, width * height * 4),
-                        name);
-                    this.factory.TextureManager.Blame(wrap, this.data.Owner?.OwnerPlugin);
-                    this.data.AddExistingTexture(wrap);
-                    texture.TexID = wrap.Handle;
-                }
-                else if (texture.TexPixelsAlpha8 is not null)
-                {
-                    var numPixels = width * height;
-                    if (buf.Length < numPixels * bpp)
-                    {
-                        ArrayPool<byte>.Shared.Return(buf);
-                        buf = ArrayPool<byte>.Shared.Rent(numPixels * bpp);
-                    }
+                // TODO: Check how to upload textures with the new font system from ImGui itself.
 
-                    fixed (void* pBuf = buf)
-                    {
-                        var sourcePtr = texture.TexPixelsAlpha8;
-                        if (use4)
-                        {
-                            var target = (ushort*)pBuf;
-                            while (numPixels-- > 0)
-                            {
-                                *target = (ushort)((*sourcePtr << 8) | 0x0FFF);
-                                target++;
-                                sourcePtr++;
-                            }
-                        }
-                        else
-                        {
-                            var target = (uint*)pBuf;
-                            while (numPixels-- > 0)
-                            {
-                                *target = (uint)((*sourcePtr << 24) | 0x00FFFFFF);
-                                target++;
-                                sourcePtr++;
-                            }
-                        }
-                    }
-
-                    var wrap = this.factory.TextureManager.CreateFromRaw(
-                        new(
-                            width,
-                            height,
-                            (int)(use4 ? DXGI_FORMAT.DXGI_FORMAT_B4G4R4A4_UNORM : DXGI_FORMAT.DXGI_FORMAT_B8G8R8A8_UNORM),
-                            width * bpp),
-                        buf,
-                        name);
-                    this.factory.TextureManager.Blame(wrap, this.data.Owner?.OwnerPlugin);
-                    this.data.AddExistingTexture(wrap);
-                    texture.TexID = wrap.Handle;
-                }
-                else
-                {
-                    Log.Warning(
-                        "[{name}]: TexID, TexPixelsRGBA32, and TexPixelsAlpha8 are all null",
-                        this.data.Owner?.Name ?? "(error)");
-                }
-
-                if (texture.TexPixelsRGBA32 is not null)
-                    ImGui.MemFree(texture.TexPixelsRGBA32);
-                if (texture.TexPixelsAlpha8 is not null)
-                    ImGui.MemFree(texture.TexPixelsAlpha8);
-                texture.TexPixelsRGBA32 = null;
-                texture.TexPixelsAlpha8 = null;
+                // var width = this.NewImAtlas.TexWidth;
+                // var height = this.NewImAtlas.TexHeight;
+                // var texture = this.NewImAtlas;
+                // var name =
+                //     $"{nameof(FontAtlasBuiltData)}[{this.data.Owner?.Name ?? "-"}][0x{(long)this.data.Atlas.Handle:X}]";
+                // if (!texture.TexID.IsNull)
+                // {
+                //     // Nothing to do
+                // }
+                // else if (texture.TexPixelsRGBA32 is not null)
+                // {
+                //     var wrap = this.factory.TextureManager.CreateFromRaw(
+                //         RawImageSpecification.Rgba32(width, height),
+                //         new(texture.TexPixelsRGBA32, width * height * 4),
+                //         name);
+                //     this.factory.TextureManager.Blame(wrap, this.data.Owner?.OwnerPlugin);
+                //     this.data.AddExistingTexture(wrap);
+                //     texture.TexID = wrap.Handle;
+                // }
+                // else if (texture.TexPixelsAlpha8 is not null)
+                // {
+                //     var numPixels = width * height;
+                //     if (buf.Length < numPixels * bpp)
+                //     {
+                //         ArrayPool<byte>.Shared.Return(buf);
+                //         buf = ArrayPool<byte>.Shared.Rent(numPixels * bpp);
+                //     }
+                //
+                //     fixed (void* pBuf = buf)
+                //     {
+                //         var sourcePtr = texture.TexPixelsAlpha8;
+                //         if (use4)
+                //         {
+                //             var target = (ushort*)pBuf;
+                //             while (numPixels-- > 0)
+                //             {
+                //                 *target = (ushort)((*sourcePtr << 8) | 0x0FFF);
+                //                 target++;
+                //                 sourcePtr++;
+                //             }
+                //         }
+                //         else
+                //         {
+                //             var target = (uint*)pBuf;
+                //             while (numPixels-- > 0)
+                //             {
+                //                 *target = (uint)((*sourcePtr << 24) | 0x00FFFFFF);
+                //                 target++;
+                //                 sourcePtr++;
+                //             }
+                //         }
+                //     }
+                //
+                //     var wrap = this.factory.TextureManager.CreateFromRaw(
+                //         new(
+                //             width,
+                //             height,
+                //             (int)(use4 ? DXGI_FORMAT.DXGI_FORMAT_B4G4R4A4_UNORM : DXGI_FORMAT.DXGI_FORMAT_B8G8R8A8_UNORM),
+                //             width * bpp),
+                //         buf,
+                //         name);
+                //     this.factory.TextureManager.Blame(wrap, this.data.Owner?.OwnerPlugin);
+                //     this.data.AddExistingTexture(wrap);
+                //     texture.TexID = wrap.Handle;
+                // }
+                // else
+                // {
+                //     Log.Warning(
+                //         "[{name}]: TexID, TexPixelsRGBA32, and TexPixelsAlpha8 are all null",
+                //         this.data.Owner?.Name ?? "(error)");
+                // }
+                //
+                // if (texture.TexPixelsRGBA32 is not null)
+                //     ImGui.MemFree(texture.TexPixelsRGBA32);
+                // if (texture.TexPixelsAlpha8 is not null)
+                //     ImGui.MemFree(texture.TexPixelsAlpha8);
+                // texture.TexPixelsRGBA32 = null;
+                // texture.TexPixelsAlpha8 = null;
             }
             finally
             {
@@ -803,47 +810,50 @@ internal sealed partial class FontAtlasFactory
         /// <inheritdoc/>
         public unsafe void BuildLookupTable(ImFontPtr font)
         {
+            // TODO: Figure out how to handle this with the new font system
             // Need to clear previous Fallback pointers before BuildLookupTable, or it may crash
-            font.Handle->FallbackGlyph = null;
-            font.Handle->FallbackHotData = null;
-            font.BuildLookupTable();
+            // font.Handle->FallbackGlyph = null;
+            // font.Handle->FallbackHotData = null;
+            // font.BuildLookupTable();
 
             // Need to fix our custom ImGui, so that imgui_widgets.cpp:3656 stops thinking
             // Codepoint < FallbackHotData.size always means that it's not fallback char.
             // Otherwise, having a fallback character in ImGui.InputText gets strange.
-            var indexedHotData = font.IndexedHotDataWrapped();
-            var indexLookup = font.IndexLookupWrapped();
-            ref var fallbackHotData = ref *(ImGuiHelpers.ImFontGlyphHotDataReal*)font.Handle->FallbackHotData;
-            for (var codepoint = 0; codepoint < indexedHotData.Length; codepoint++)
-            {
-                if (indexLookup[codepoint] == ushort.MaxValue)
-                {
-                    indexedHotData[codepoint].AdvanceX = fallbackHotData.AdvanceX;
-                    indexedHotData[codepoint].OccupiedWidth = fallbackHotData.OccupiedWidth;
-                }
-            }
+            // var indexedHotData = font.IndexedHotDataWrapped();
+            // var indexLookup = font.IndexLookupWrapped();
+            // ref var fallbackHotData = ref *(ImGuiHelpers.ImFontGlyphHotDataReal*)font.Handle->FallbackHotData;
+            // for (var codepoint = 0; codepoint < indexedHotData.Length; codepoint++)
+            // {
+            //     if (indexLookup[codepoint] == ushort.MaxValue)
+            //     {
+            //         indexedHotData[codepoint].AdvanceX = fallbackHotData.AdvanceX;
+            //         indexedHotData[codepoint].OccupiedWidth = fallbackHotData.OccupiedWidth;
+            //     }
+            // }
         }
 
         /// <inheritdoc/>
         public void FitRatio(ImFontPtr font, bool rebuildLookupTable = true)
         {
-            var nsize = font.FontSize;
-            var glyphs = font.GlyphsWrapped();
-            foreach (ref var glyph in glyphs.DataSpan)
-            {
-                var ratio = 1f;
-                if (glyph.X1 - glyph.X0 > nsize)
-                    ratio = Math.Max(ratio, (glyph.X1 - glyph.X0) / nsize);
-                if (glyph.Y1 - glyph.Y0 > nsize)
-                    ratio = Math.Max(ratio, (glyph.Y1 - glyph.Y0) / nsize);
-                var w = MathF.Round((glyph.X1 - glyph.X0) / ratio, MidpointRounding.ToZero);
-                var h = MathF.Round((glyph.Y1 - glyph.Y0) / ratio, MidpointRounding.AwayFromZero);
-                glyph.X0 = MathF.Round((nsize - w) / 2f, MidpointRounding.ToZero);
-                glyph.Y0 = MathF.Round((nsize - h) / 2f, MidpointRounding.AwayFromZero);
-                glyph.X1 = glyph.X0 + w;
-                glyph.Y1 = glyph.Y0 + h;
-                glyph.AdvanceX = nsize;
-            }
+            // TODO: Figure out how to do this with the new font system
+
+            // var nsize = font.LegacySize;
+            // var glyphs = font.GlyphsWrapped();
+            // foreach (ref var glyph in glyphs.DataSpan)
+            // {
+            //     var ratio = 1f;
+            //     if (glyph.X1 - glyph.X0 > nsize)
+            //         ratio = Math.Max(ratio, (glyph.X1 - glyph.X0) / nsize);
+            //     if (glyph.Y1 - glyph.Y0 > nsize)
+            //         ratio = Math.Max(ratio, (glyph.Y1 - glyph.Y0) / nsize);
+            //     var w = MathF.Round((glyph.X1 - glyph.X0) / ratio, MidpointRounding.ToZero);
+            //     var h = MathF.Round((glyph.Y1 - glyph.Y0) / ratio, MidpointRounding.AwayFromZero);
+            //     glyph.X0 = MathF.Round((nsize - w) / 2f, MidpointRounding.ToZero);
+            //     glyph.Y0 = MathF.Round((nsize - h) / 2f, MidpointRounding.AwayFromZero);
+            //     glyph.X1 = glyph.X0 + w;
+            //     glyph.Y1 = glyph.Y0 + h;
+            //     glyph.AdvanceX = nsize;
+            // }
 
             if (rebuildLookupTable)
                 this.BuildLookupTable(font);

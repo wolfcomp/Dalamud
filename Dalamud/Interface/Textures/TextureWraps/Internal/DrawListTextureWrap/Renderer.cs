@@ -242,7 +242,7 @@ internal sealed unsafe partial class DrawListTextureWrap
                     {
                         // Bind texture and draw
                         var samplerp = this.samplerState.Get();
-                        var srvp = (ID3D11ShaderResourceView*)cmd.TextureId.Handle;
+                        var srvp = (ID3D11ShaderResourceView*)cmd.TexRef.TexID;
                         this.deviceContext.Get()->PSSetShader(this.drawToPremulPixelShader, null, 0);
                         this.deviceContext.Get()->PSSetSamplers(0, 1, &samplerp);
                         this.deviceContext.Get()->PSSetShaderResources(0, 1, &srvp);

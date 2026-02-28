@@ -559,7 +559,7 @@ public sealed class SingleFontChooserDialog : IDisposable
         else
         {
             ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X);
-            using (this.fontHandle?.Push())
+            using (this.fontHandle?.Push(0))
             {
                 var fontPreviewTextSpan = this.fontPreviewText.AsSpan();
                 unsafe
@@ -567,7 +567,7 @@ public sealed class SingleFontChooserDialog : IDisposable
                     ImGui.InputTextMultiline(
                         "##fontPreviewText"u8,
                         fontPreviewTextSpan.GetPointer(0),
-                        (ulong)fontPreviewTextSpan.Length,
+                        (nuint)fontPreviewTextSpan.Length,
                         ImGui.GetContentRegionAvail());
                 }
             }

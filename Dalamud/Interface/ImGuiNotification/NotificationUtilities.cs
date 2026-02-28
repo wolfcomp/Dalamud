@@ -50,27 +50,29 @@ public static class NotificationUtilities
             return false;
 
         var smallerDim = Math.Max(maxCoord.Y - minCoord.Y, maxCoord.X - minCoord.X);
-        using (fontHandle.Push())
+        using (fontHandle.Push(0))
         {
             var font = ImGui.GetFont();
-            var glyphPtr = (ImGuiHelpers.ImFontGlyphReal*)font.FindGlyphNoFallback(c);
-            if (glyphPtr is null)
-                return false;
+            // TODO: Figure out how to do this with new font system
 
-            ref readonly var glyph = ref *glyphPtr;
-            var size = glyph.XY1 - glyph.XY0;
-            var smallerSizeDim = Math.Min(size.X, size.Y);
-            var scale = smallerSizeDim > smallerDim ? smallerDim / smallerSizeDim : 1f;
-            size *= scale;
-            var pos = ((minCoord + maxCoord) - size) / 2;
-            pos += ImGui.GetWindowPos();
-            ImGui.GetWindowDrawList().AddImage(
-                font.ContainerAtlas.TexID,
-                pos,
-                pos + size,
-                glyph.UV0,
-                glyph.UV1,
-                ImGui.GetColorU32(color with { W = color.W * ImGui.GetStyle().Alpha }));
+            // var glyphPtr = (ImGuiHelpers.ImFontGlyphReal*)font.FindGlyphNoFallback(c);
+            // if (glyphPtr is null)
+            //     return false;
+            //
+            // ref readonly var glyph = ref *glyphPtr;
+            // var size = glyph.XY1 - glyph.XY0;
+            // var smallerSizeDim = Math.Min(size.X, size.Y);
+            // var scale = smallerSizeDim > smallerDim ? smallerDim / smallerSizeDim : 1f;
+            // size *= scale;
+            // var pos = ((minCoord + maxCoord) - size) / 2;
+            // pos += ImGui.GetWindowPos();
+            // ImGui.GetWindowDrawList().AddImage(
+            //     font.ContainerAtlas.TexID,
+            //     pos,
+            //     pos + size,
+            //     glyph.UV0,
+            //     glyph.UV1,
+            //     ImGui.GetColorU32(color with { W = color.W * ImGui.GetStyle().Alpha }));
         }
 
         return true;

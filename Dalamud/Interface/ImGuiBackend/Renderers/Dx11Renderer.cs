@@ -372,7 +372,7 @@ internal unsafe partial class Dx11Renderer : IImGuiRenderer
                     this.context.Get()->RSSetScissorRects(1, &clipRect);
 
                     // Bind texture and draw
-                    var srv = (ID3D11ShaderResourceView*)cmd.TextureId.Handle;
+                    var srv = (ID3D11ShaderResourceView*)cmd.TexRef.TexID;
                     this.context.Get()->PSSetShaderResources(0, 1, &srv);
                     this.context.Get()->DrawIndexed(
                         cmd.ElemCount,
@@ -392,35 +392,37 @@ internal unsafe partial class Dx11Renderer : IImGuiRenderer
     /// </summary>
     private void CreateFontsTexture()
     {
-        ObjectDisposedException.ThrowIf(this.device.IsEmpty(), this);
+        // TODO: Figure out new font system
 
-        if (this.fontTextures.Count != 0)
-            return;
-
-        var io = ImGui.GetIO();
-        if (!io.Fonts.TexReady)
-            io.Fonts.Build();
-
-        int width = 0, height = 0, bytespp = 0;
-        byte* fontPixels = null;
-
-        // Build texture atlas
-        io.Fonts.GetTexDataAsRGBA32(
-            &fontPixels,
-            ref width,
-            ref height,
-            ref bytespp);
-
-        var tex = this.CreateTexture2D(
-            new(fontPixels, width * height * bytespp),
-            new(width, height, (int)DXGI_FORMAT.DXGI_FORMAT_R8G8B8A8_UNORM, width * bytespp),
-            false,
-            false,
-            false);
-        io.Fonts.SetTexID(tex.Handle);
-        this.fontTextures.Add(tex);
-
-        io.Fonts.ClearTexData();
+        // ObjectDisposedException.ThrowIf(this.device.IsEmpty(), this);
+        //
+        // if (this.fontTextures.Count != 0)
+        //     return;
+        //
+        // var io = ImGui.GetIO();
+        // if (!io.Fonts.TexIsBuilt)
+        //     io.Fonts.;
+        //
+        // int width = 0, height = 0, bytespp = 0;
+        // byte* fontPixels = null;
+        //
+        // // Build texture atlas
+        // io.Fonts.GetTexDataAsRGBA32(
+        //     &fontPixels,
+        //     ref width,
+        //     ref height,
+        //     ref bytespp);
+        //
+        // var tex = this.CreateTexture2D(
+        //     new(fontPixels, width * height * bytespp),
+        //     new(width, height, (int)DXGI_FORMAT.DXGI_FORMAT_R8G8B8A8_UNORM, width * bytespp),
+        //     false,
+        //     false,
+        //     false);
+        // io.Fonts.SetTexID(tex.Handle);
+        // this.fontTextures.Add(tex);
+        //
+        // io.Fonts.ClearTexData();
     }
 
     /// <summary>
@@ -649,7 +651,7 @@ internal unsafe partial class Dx11Renderer : IImGuiRenderer
         foreach (var fontResourceView in this.fontTextures)
             fontResourceView.Dispose();
 
-        io.Fonts.SetTexID(ImTextureID.Null);
+        // io.Fonts.SetTexID(ImTextureID.Null);
 
         this.device.Reset();
         this.context.Reset();

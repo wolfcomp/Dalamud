@@ -16,6 +16,6 @@ public static class DalamudTextureWrapExtensions
             return false;
         if (a is null)
             return false;
-        return a.Handle == b.Handle;
+        return a.Handle.TexID == b.Handle.TexID;
     }
 }

@@ -16,7 +16,7 @@ namespace Dalamud.Interface.Textures.TextureWraps;
 public interface IDalamudTextureWrap : IDisposable
 {
     /// <summary>Gets a texture handle suitable for direct use with ImGui functions.</summary>
-    ImTextureID Handle { get; }
+    ImTextureRef Handle { get; }
 
     /// <summary>Gets the width of the texture.</summary>
     int Width { get; }
@@ -46,7 +46,7 @@ public interface IDalamudTextureWrap : IDisposable
     unsafe IDalamudTextureWrap CreateWrapSharingLowLevelResource()
     {
         // Dalamud specific: IDalamudTextureWrap always points to an ID3D11ShaderResourceView.
-        var handle = (IUnknown*)this.Handle.Handle;
+        var handle = (IUnknown*)this.Handle.TexID;
         return new UnknownTextureWrap(handle, this.Width, this.Height, true);
     }
 }

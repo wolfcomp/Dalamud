@@ -734,7 +734,7 @@ internal partial class InterfaceManager : IInternalDisposableService
 
             style.Apply();
 
-            ImGui.GetIO().FontGlobalScale = configuration.GlobalUiScale;
+            ImGui.GetStyle().FontScaleMain = configuration.GlobalUiScale;
 
             if (!configuration.IsDocking)
             {

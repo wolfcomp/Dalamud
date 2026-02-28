@@ -84,7 +84,7 @@ public unsafe ref struct SeStringDrawState : IDisposable
         this.splitter = default;
         this.GetEntity = ssdp.GetEntity;
         this.ScreenOffset = new(MathF.Round(this.ScreenOffset.X), MathF.Round(this.ScreenOffset.Y));
-        this.FontSizeScale = this.FontSize / this.Font.FontSize;
+        this.FontSizeScale = this.FontSize;
         this.LineHeight = MathF.Round(ssdp.EffectiveLineHeight);
         this.LinkUnderlineThickness = ssdp.LinkUnderlineThickness ?? 0f;
         this.Opacity = ssdp.EffectiveOpacity;
@@ -199,14 +199,14 @@ public unsafe ref struct SeStringDrawState : IDisposable
         this.splitter.SetCurrentChannel(this.drawList, (int)channelIndex);
 
     /// <summary>Draws a single texture.</summary>
-    /// <param name="igTextureId">ImGui texture ID to draw from.</param>
+    /// <param name="igTextureId">ImGui texture ref to draw from.</param>
     /// <param name="offset">Offset of the glyph in pixels w.r.t. <see cref="ScreenOffset"/>.</param>
     /// <param name="size">Right bottom corner of the glyph w.r.t. its glyph origin in the target draw list.</param>
     /// <param name="uv0">Left top corner of the glyph w.r.t. its glyph origin in the source texture.</param>
     /// <param name="uv1">Right bottom corner of the glyph w.r.t. its glyph origin in the source texture.</param>
     /// <param name="color">Color of the glyph in RGBA.</param>
     public readonly void Draw(
-        ImTextureID igTextureId,
+        ImTextureRef igTextureId,
         Vector2 offset,
         Vector2 size,
         Vector2 uv0,
@@ -228,7 +228,7 @@ public unsafe ref struct SeStringDrawState : IDisposable
     }
 
     /// <summary>Draws a single texture.</summary>
-    /// <param name="igTextureId">ImGui texture ID to draw from.</param>
+    /// <param name="igTextureId">ImGui texture ref to draw from.</param>
     /// <param name="offset">Offset of the glyph in pixels w.r.t. <see cref="ScreenOffset"/>.</param>
     /// <param name="xy0">Left top corner of the glyph w.r.t. its glyph origin in the target draw list.</param>
     /// <param name="xy1">Right bottom corner of the glyph w.r.t. its glyph origin in the target draw list.</param>
@@ -239,7 +239,7 @@ public unsafe ref struct SeStringDrawState : IDisposable
     ///     top and bottom pixels to apply faux italicization by <see cref="Vector2.X"/> and <see cref="Vector2.Y"/>
     ///     respectively.</param>
     public readonly void Draw(
-        ImTextureID igTextureId,
+        ImTextureRef igTextureId,
         Vector2 offset,
         Vector2 xy0,
         Vector2 xy1,
@@ -267,7 +267,7 @@ public unsafe ref struct SeStringDrawState : IDisposable
     /// <param name="offset">Offset of the glyph in pixels w.r.t. <see cref="ScreenOffset"/>.</param>
     internal void DrawGlyph(scoped in ImGuiHelpers.ImFontGlyphReal g, Vector2 offset)
     {
-        var texId = this.Font.ContainerAtlas.TexID;
+        var texId = this.Font.ContainerAtlas.TexRef;
         var xy0 = new Vector2(
             MathF.Round(g.X0 * this.FontSizeScale),
             MathF.Round(g.Y0 * this.FontSizeScale));
@@ -324,7 +324,7 @@ public unsafe ref struct SeStringDrawState : IDisposable
 
         offset += this.ScreenOffset;
         offset.Y += (this.LinkUnderlineThickness - 1) / 2f;
-        offset.Y += MathF.Round(((this.LineHeight - this.FontSize) / 2) + (this.Font.Ascent * this.FontSizeScale));
+        // offset.Y += MathF.Round(((this.LineHeight - this.FontSize) / 2) + (this.Font.Ascent * this.FontSizeScale));
 
         this.SetCurrentChannel(SeStringDrawChannel.Foreground);
         this.DrawList.AddLine(
@@ -344,52 +344,54 @@ public unsafe ref struct SeStringDrawState : IDisposable
         }
     }
 
-    /// <summary>Gets the glyph corresponding to the given codepoint.</summary>
-    /// <param name="rune">An instance of <see cref="Rune"/> that represents a character to display.</param>
-    /// <returns>Corresponding glyph, or glyph of a fallback character specified from
-    /// <see cref="ImFont.FallbackChar"/>.</returns>
-    internal readonly ref ImGuiHelpers.ImFontGlyphReal FindGlyph(Rune rune)
-    {
-        var p = rune.Value is >= ushort.MinValue and < ushort.MaxValue
-                    ? (ImFontGlyphPtr)this.Font.FindGlyph((ushort)rune.Value)
-                    : this.Font.FallbackGlyph;
-        return ref *(ImGuiHelpers.ImFontGlyphReal*)p.Handle;
-    }
+    // TODO: Figure out the new font logic stuff
 
-    /// <summary>Gets the glyph corresponding to the given codepoint.</summary>
-    /// <param name="rune">An instance of <see cref="Rune"/> that represents a character to display, that will be
-    /// changed on return to the rune corresponding to the fallback glyph if a glyph not corresponding to the
-    /// requested glyph is being returned.</param>
-    /// <returns>Corresponding glyph, or glyph of a fallback character specified from
-    /// <see cref="ImFont.FallbackChar"/>.</returns>
-    internal readonly ref ImGuiHelpers.ImFontGlyphReal FindGlyph(ref Rune rune)
-    {
-        ref var glyph = ref this.FindGlyph(rune);
-        if (rune.Value != glyph.Codepoint && !Rune.TryCreate(glyph.Codepoint, out rune))
-            rune = Rune.ReplacementChar;
-        return ref glyph;
-    }
+    // /// <summary>Gets the glyph corresponding to the given codepoint.</summary>
+    // /// <param name="rune">An instance of <see cref="Rune"/> that represents a character to display.</param>
+    // /// <returns>Corresponding glyph, or glyph of a fallback character specified from
+    // /// <see cref="ImFont.FallbackChar"/>.</returns>
+    // internal readonly ref ImGuiHelpers.ImFontGlyphReal FindGlyph(Rune rune)
+    // {
+    //     var p = rune.Value is >= ushort.MinValue and < ushort.MaxValue
+    //                 ? (ImFontGlyphPtr)this.Font.FindGlyph((ushort)rune.Value)
+    //                 : this.Font.FallbackGlyph;
+    //     return ref *(ImGuiHelpers.ImFontGlyphReal*)p.Handle;
+    // }
 
-    /// <summary>Gets the kerning adjustment between two glyphs in a succession corresponding to the given runes.
-    /// </summary>
-    /// <param name="left">Rune representing the glyph on the left side of a pair.</param>
-    /// <param name="right">Rune representing the glyph on the right side of a pair.</param>
-    /// <returns>Distance adjustment in pixels, scaled to the size specified from
-    /// <see cref="SeStringDrawParams.FontSize"/>, and rounded.</returns>
-    internal readonly float CalculateScaledDistance(Rune left, Rune right)
-    {
-        // Kerning distance entries are ignored if NUL, U+FFFF(invalid Unicode character), or characters outside
-        // the basic multilingual plane(BMP) is involved.
-        if (left.Value is <= 0 or >= char.MaxValue)
-            return 0;
-        if (right.Value is <= 0 or >= char.MaxValue)
-            return 0;
+    // /// <summary>Gets the glyph corresponding to the given codepoint.</summary>
+    // /// <param name="rune">An instance of <see cref="Rune"/> that represents a character to display, that will be
+    // /// changed on return to the rune corresponding to the fallback glyph if a glyph not corresponding to the
+    // /// requested glyph is being returned.</param>
+    // /// <returns>Corresponding glyph, or glyph of a fallback character specified from
+    // /// <see cref="ImFont.FallbackChar"/>.</returns>
+    // internal readonly ref ImGuiHelpers.ImFontGlyphReal FindGlyph(ref Rune rune)
+    // {
+    //     ref var glyph = ref this.FindGlyph(rune);
+    //     if (rune.Value != glyph.Codepoint && !Rune.TryCreate(glyph.Codepoint, out rune))
+    //         rune = Rune.ReplacementChar;
+    //     return ref glyph;
+    // }
 
-        return MathF.Round(
-            this.Font.GetDistanceAdjustmentForPair(
-                (ushort)left.Value,
-                (ushort)right.Value) * this.FontSizeScale);
-    }
+    // /// <summary>Gets the kerning adjustment between two glyphs in a succession corresponding to the given runes.
+    // /// </summary>
+    // /// <param name="left">Rune representing the glyph on the left side of a pair.</param>
+    // /// <param name="right">Rune representing the glyph on the right side of a pair.</param>
+    // /// <returns>Distance adjustment in pixels, scaled to the size specified from
+    // /// <see cref="SeStringDrawParams.FontSize"/>, and rounded.</returns>
+    // internal readonly float CalculateScaledDistance(Rune left, Rune right)
+    // {
+    //     // Kerning distance entries are ignored if NUL, U+FFFF(invalid Unicode character), or characters outside
+    //     // the basic multilingual plane(BMP) is involved.
+    //     if (left.Value is <= 0 or >= char.MaxValue)
+    //         return 0;
+    //     if (right.Value is <= 0 or >= char.MaxValue)
+    //         return 0;
+    //
+    //     return MathF.Round(
+    //         this.Font.GetDistanceAdjustmentForPair(
+    //             (ushort)left.Value,
+    //             (ushort)right.Value) * this.FontSizeScale);
+    // }
 
     /// <summary>Handles style adjusting payloads.</summary>
     /// <param name="payload">Payload to handle.</param>

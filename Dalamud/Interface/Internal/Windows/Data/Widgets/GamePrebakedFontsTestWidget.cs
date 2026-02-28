@@ -180,14 +180,12 @@ internal class GamePrebakedFontsTestWidget : IDataWindowWidget, IDisposable
 
         fixed (byte* labelPtr = "Test Input"u8)
         {
-            if (!this.atlasScaleMode)
-                ImGui.SetWindowFontScale(1 / ImGuiHelpers.GlobalScale);
-            using (this.fontDialogHandle.Push())
+            using (this.fontDialogHandle.Push(1 / ImGuiHelpers.GlobalScale))
             {
                 if (ImGui.InputTextMultiline(
                         labelPtr,
                         this.testStringBuffer.StorageSpan.GetPointer(0),
-                        (ulong)this.testStringBuffer.StorageSpan.Length,
+                        (nuint)this.testStringBuffer.StorageSpan.Length,
                         new Vector2(ImGui.GetContentRegionAvail().X, ImGui.GetTextLineHeight() * 3)))
                 {
                     var len = this.testStringBuffer.StorageSpan.IndexOf((byte)0);
@@ -203,9 +201,6 @@ internal class GamePrebakedFontsTestWidget : IDataWindowWidget, IDisposable
                         _ = this.privateAtlas?.BuildFontsAsync();
                 }
             }
-
-            if (!this.atlasScaleMode)
-                ImGui.SetWindowFontScale(1);
         }
 
         this.fontHandles ??=
@@ -266,17 +261,14 @@ internal class GamePrebakedFontsTestWidget : IDataWindowWidget, IDisposable
                     }
                     else
                     {
-                        if (!this.atlasScaleMode)
-                            ImGui.SetWindowFontScale(1 / ImGuiHelpers.GlobalScale);
-
                         if (counter++ % 2 == 0)
                         {
-                            using var pushPop = handle.Value.Push();
+                            using var pushPop = handle.Value.Push(1 / ImGuiHelpers.GlobalScale);
                             ImGui.Text(this.testStringBuffer.DataSpan);
                         }
                         else
                         {
-                            handle.Value.Push();
+                            handle.Value.Push(0);
                             ImGui.Text(this.testStringBuffer.DataSpan);
                             handle.Value.Pop();
                         }
@@ -284,7 +276,7 @@ internal class GamePrebakedFontsTestWidget : IDataWindowWidget, IDisposable
                 }
                 finally
                 {
-                    ImGui.SetWindowFontScale(1);
+                    // ignore
                 }
             }
         }
@@ -345,7 +337,7 @@ internal class GamePrebakedFontsTestWidget : IDataWindowWidget, IDisposable
 
         static void TestSingle(ImFontPtr fontPtr, IFontHandle handle)
         {
-            var dim = ImGui.CalcTextSizeA(fontPtr, fontPtr.FontSize, float.MaxValue, 0f, "Test string"u8);
+            var dim = ImGui.CalcTextSizeA(fontPtr, fontPtr.LegacySize, float.MaxValue, 0f, "Test string"u8); // TODO: Figure out how to use new font size logic
             Log.Information($"{nameof(GamePrebakedFontsTestWidget)}: {handle} => {dim}");
         }
     }

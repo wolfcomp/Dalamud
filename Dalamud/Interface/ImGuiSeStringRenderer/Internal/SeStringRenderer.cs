@@ -460,7 +460,8 @@ internal class SeStringRenderer : IServiceType
                         xy.X += state.Fragments[^1].AdvanceWidthWithoutSoftHyphen - state.Fragments[^1].AdvanceWidth;
 
                     // Adjust this fragment's offset from kerning distance.
-                    xy.X += state.CalculateScaledDistance(state.Fragments[^1].LastRune, fragment.FirstRune);
+                    // TODO: Figure out how to do this with the new font system
+                    // xy.X += state.CalculateScaledDistance(state.Fragments[^1].LastRune, fragment.FirstRune);
                     fragment.Offset = xy;
                 }
 
@@ -491,7 +492,7 @@ internal class SeStringRenderer : IServiceType
     /// <param name="lastRune">Rune that preceded this text fragment in the same line, or <c>0</c> if none.</param>
     /// <param name="link">Byte offset of the link payload that decorates this text fragment in
     /// <see cref="SeStringDrawState.Span"/>, or <c>-1</c> if none.</param>
-    private void DrawTextFragment(
+    private unsafe void DrawTextFragment(
         ref SeStringDrawState state,
         Vector2 offset,
         bool displaySoftHyphen,
@@ -523,7 +524,7 @@ internal class SeStringRenderer : IServiceType
                     if (gfdTextureSrv != 0)
                     {
                         state.Draw(
-                            new(gfdTextureSrv),
+                            new(null, gfdTextureSrv),
                             offset + new Vector2(x, MathF.Round((state.LineHeight - size.Y) / 2)),
                             size,
                             useHq ? gfdEntry.HqUv0 : gfdEntry.Uv0,
@@ -545,17 +546,19 @@ internal class SeStringRenderer : IServiceType
             if (!TryGetDisplayRune(c.EffectiveRune, out var rune, displaySoftHyphen))
                 continue;
 
-            ref var g = ref state.FindGlyph(ref rune);
-            var dist = state.CalculateScaledDistance(lastRune, rune);
-            var advanceWidth = MathF.Round(g.AdvanceX * state.FontSizeScale);
-            lastRune = rune;
+            // TODO: Figure out how to do this with the new font system
 
-            state.DrawGlyph(g, offset + new Vector2(x + dist, 0));
-            if (link != -1)
-                state.DrawLinkUnderline(offset + new Vector2(x + dist, 0), advanceWidth);
-
-            width = Math.Max(width, x + dist + (g.X1 * state.FontSizeScale));
-            x += dist + advanceWidth;
+            // ref var g = ref state.FindGlyph(ref rune);
+            // var dist = state.CalculateScaledDistance(lastRune, rune);
+            // var advanceWidth = MathF.Round(g.AdvanceX * state.FontSizeScale);
+            // lastRune = rune;
+            //
+            // state.DrawGlyph(g, offset + new Vector2(x + dist, 0));
+            // if (link != -1)
+            //     state.DrawLinkUnderline(offset + new Vector2(x + dist, 0), advanceWidth);
+            //
+            // width = Math.Max(width, x + dist + (g.X1 * state.FontSizeScale));
+            // x += dist + advanceWidth;
         }
 
         return;
@@ -688,10 +691,11 @@ internal class SeStringRenderer : IServiceType
             else if (TryGetDisplayRune(effectiveRune, out displayRune))
             {
                 // This is a printable character, or a standard whitespace character.
-                ref var g = ref state.FindGlyph(ref displayRune);
-                var dist = state.CalculateScaledDistance(lastDisplayRune, displayRune);
-                w = Math.Max(w, x + dist + MathF.Round(g.X1 * state.FontSizeScale));
-                x += dist + MathF.Round(g.AdvanceX * state.FontSizeScale);
+                // TODO: Figure out how to do this with the new font system
+                // ref var g = ref state.FindGlyph(ref displayRune);
+                // var dist = state.CalculateScaledDistance(lastDisplayRune, displayRune);
+                // w = Math.Max(w, x + dist + MathF.Round(g.X1 * state.FontSizeScale));
+                // x += dist + MathF.Round(g.AdvanceX * state.FontSizeScale);
 
                 isBreakableWhitespace =
                     Rune.IsWhiteSpace(displayRune) &&

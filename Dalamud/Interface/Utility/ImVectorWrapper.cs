@@ -701,27 +701,27 @@ public static class ImVectorWrapper
             ? throw new NullReferenceException()
             : new((ImVector<ImFontPtr>*)Unsafe.AsPointer(ref obj.Fonts), x => x->Destroy());
 
-    /// <summary>
-    /// Wraps <see cref="ImFont.Glyphs"/> into a <see cref="ImVectorWrapper{T}"/>.<br />
-    /// This does not need to be disposed.
-    /// </summary>
-    /// <param name="obj">The owner object.</param>
-    /// <returns>The wrapped vector.</returns>
-    public static unsafe ImVectorWrapper<ImGuiHelpers.ImFontGlyphReal> GlyphsWrapped(this ImFontPtr obj) =>
-        obj.Handle is null
-            ? throw new NullReferenceException()
-            : new((ImVector<ImGuiHelpers.ImFontGlyphReal>*)Unsafe.AsPointer(ref obj.Glyphs));
+    // /// <summary>
+    // /// Wraps <see cref="ImFont.Glyphs"/> into a <see cref="ImVectorWrapper{T}"/>.<br />
+    // /// This does not need to be disposed.
+    // /// </summary>
+    // /// <param name="obj">The owner object.</param>
+    // /// <returns>The wrapped vector.</returns>
+    // public static unsafe ImVectorWrapper<ImGuiHelpers.ImFontGlyphReal> GlyphsWrapped(this ImFontPtr obj) =>
+    //     obj.Handle is null
+    //         ? throw new NullReferenceException()
+    //         : new((ImVector<ImGuiHelpers.ImFontGlyphReal>*)Unsafe.AsPointer(ref obj.Glyphs));
 
-    /// <summary>
-    /// Wraps <see cref="ImFont.IndexLookup"/> into a <see cref="ImVectorWrapper{T}"/>.<br />
-    /// This does not need to be disposed.
-    /// </summary>
-    /// <param name="obj">The owner object.</param>
-    /// <returns>The wrapped vector.</returns>
-    public static unsafe ImVectorWrapper<ushort> IndexLookupWrapped(this ImFontPtr obj) =>
-        obj.Handle is null
-            ? throw new NullReferenceException()
-            : new((ImVector<ushort>*)Unsafe.AsPointer(ref obj.IndexLookup));
+    // /// <summary>
+    // /// Wraps <see cref="ImFont.IndexLookup"/> into a <see cref="ImVectorWrapper{T}"/>.<br />
+    // /// This does not need to be disposed.
+    // /// </summary>
+    // /// <param name="obj">The owner object.</param>
+    // /// <returns>The wrapped vector.</returns>
+    // public static unsafe ImVectorWrapper<ushort> IndexLookupWrapped(this ImFontPtr obj) =>
+    //     obj.Handle is null
+    //         ? throw new NullReferenceException()
+    //         : new((ImVector<ushort>*)Unsafe.AsPointer(ref obj.IndexLookup));
 
     [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "length")]
     public static extern ref int GetSetLengthField<T>(ImVector<T> vec) where T : unmanaged;

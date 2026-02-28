@@ -39,26 +39,27 @@ public unsafe struct BufferBackedImDrawData : IDisposable
         *ds = default;
 
         var atlas = ImGui.GetIO().Fonts;
-        ds->SharedData = *ImGui.GetDrawListSharedData().Handle;
-        ds->SharedData.TexIdCommon = atlas.Textures[atlas.TextureIndexCommon].TexID;
-        ds->SharedData.TexUvWhitePixel = atlas.TexUvWhitePixel;
-        ds->SharedData.TexUvLines = (Vector4*)Unsafe.AsPointer(ref atlas.TexUvLines[0]);
-        ds->SharedData.Font = ImGui.GetIO().FontDefault;
-        ds->SharedData.FontSize = ds->SharedData.Font->FontSize;
-        ds->SharedData.ClipRectFullscreen = new(
-            float.NegativeInfinity,
-            float.NegativeInfinity,
-            float.PositiveInfinity,
-            float.PositiveInfinity);
-
-        ds->List.Data = &ds->SharedData;
-        ds->Data.CmdLists = ds->ListVec;
-        ds->Data.CmdListsCount = 1;
-        ds->Data.FramebufferScale = Vector2.One;
-
-        res.ListPtr._ResetForNewFrame();
-        res.ListPtr.PushClipRectFullScreen();
-        res.ListPtr.PushTextureID(new(atlas.TextureIndexCommon));
+        // TODO: Figure out how to do this with the new font system
+        // ds->SharedData = *ImGui.GetDrawListSharedData().Handle;
+        // ds->SharedData.TexIdCommon = atlas.Textures[atlas.TextureIndexCommon].TexID;
+        // ds->SharedData.TexUvWhitePixel = atlas.TexUvWhitePixel;
+        // ds->SharedData.TexUvLines = (Vector4*)Unsafe.AsPointer(ref atlas.TexUvLines[0]);
+        // ds->SharedData.Font = ImGui.GetIO().FontDefault;
+        // ds->SharedData.FontSize = ds->SharedData.Font->FontSize;
+        // ds->SharedData.ClipRectFullscreen = new(
+        //     float.NegativeInfinity,
+        //     float.NegativeInfinity,
+        //     float.PositiveInfinity,
+        //     float.PositiveInfinity);
+        //
+        // ds->List.Data = &ds->SharedData;
+        // ds->Data.CmdLists = ds->ListVec;
+        // ds->Data.CmdListsCount = 1;
+        // ds->Data.FramebufferScale = Vector2.One;
+        //
+        // res.ListPtr._ResetForNewFrame();
+        // res.ListPtr.PushClipRectFullScreen();
+        // res.ListPtr.PushTextureID(new(atlas.TextureIndexCommon));
         return res;
     }
 

@@ -50,10 +50,10 @@ public struct SafeFontConfig
     /// <summary>
     /// Gets or sets the index of font within a TTF/OTF file.
     /// </summary>
-    public int FontNo
+    public uint FontNo
     {
         get => this.Raw.FontNo;
-        set => this.Raw.FontNo = EnsureRange(value, 0, int.MaxValue);
+        set => this.Raw.FontNo = EnsureRange(value, 0u, uint.MaxValue);
     }
 
     /// <summary>
@@ -84,10 +84,10 @@ public struct SafeFontConfig
     /// Note the difference between 2 and 3 is minimal so you can reduce this to 2 to save memory.<br />
     /// Read https://github.com/nothings/stb/blob/master/tests/oversample/README.md for details.
     /// </summary>
-    public int OversampleH
+    public sbyte OversampleH
     {
         get => this.Raw.OversampleH;
-        set => this.Raw.OversampleH = EnsureRange(value, 1, int.MaxValue);
+        set => this.Raw.OversampleH = EnsureRange<sbyte>(value, 1, sbyte.MaxValue);
     }
 
     /// <summary>
@@ -95,10 +95,10 @@ public struct SafeFontConfig
     /// Rasterize at higher quality for sub-pixel positioning.<br />
     /// This is not really useful as we don't use sub-pixel positions on the Y axis.
     /// </summary>
-    public int OversampleV
+    public sbyte OversampleV
     {
         get => this.Raw.OversampleV;
-        set => this.Raw.OversampleV = EnsureRange(value, 1, int.MaxValue);
+        set => this.Raw.OversampleV = EnsureRange<sbyte>(value, 1, sbyte.MaxValue);
     }
 
     /// <summary>

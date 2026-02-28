@@ -13,7 +13,7 @@ namespace Dalamud.Interface.Textures.TextureWraps;
 public abstract class ForwardingTextureWrap : IDalamudTextureWrap
 {
     /// <inheritdoc/>
-    public ImTextureID Handle
+    public ImTextureRef Handle
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => this.GetWrap().Handle;
@@ -55,7 +55,7 @@ public abstract class ForwardingTextureWrap : IDalamudTextureWrap
     public virtual unsafe IDalamudTextureWrap CreateWrapSharingLowLevelResource()
     {
         // Dalamud specific: IDalamudTextureWrap always points to an ID3D11ShaderResourceView.
-        var handle = (IUnknown*)this.Handle.Handle;
+        var handle = (IUnknown*)this.Handle.TexID;
         return new UnknownTextureWrap(handle, this.Width, this.Height, true);
     }
 

@@ -283,7 +283,7 @@ internal sealed class ChangelogWindow : Window, IDisposable
             var titleFadeVal = this.isFadingOutForStateChange ? this.fadeOut.EasedPoint.X : this.titleFade.EasedPoint.X;
             using (ImRaii.PushStyle(ImGuiStyleVar.Alpha, Math.Clamp(titleFadeVal, 0f, 1f)))
             {
-                using var font = this.bannerFont.Value.Push();
+                using var font = this.bannerFont.Value.Push(0);
 
                 switch (this.state)
                 {

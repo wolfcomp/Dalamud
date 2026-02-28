@@ -876,7 +876,7 @@ public sealed class UiBuilder : IDisposable, IUiBuilder
         public ILockedImFont Lock() =>
             this.wrapped?.Lock() ?? throw new ObjectDisposedException(nameof(FontHandleWrapper));
 
-        public IDisposable Push() => this.WrappedNotDisposed.Push();
+        public IDisposable Push(float fontSizeBaseUnscaled) => this.WrappedNotDisposed.Push(fontSizeBaseUnscaled);
 
         public void Pop() => this.WrappedNotDisposed.Pop();
 

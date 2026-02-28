@@ -127,7 +127,7 @@ internal static partial class TrueTypeUtils
         if (magic == SfntFile.FileTagTrueTypeApple.NativeValue)
             return new(memory);
         if (magic == TtcFile.FileTag.NativeValue)
-            return new TtcFile(memory)[fontConfig.FontNo];
+            return new TtcFile(memory)[(int)fontConfig.FontNo];
 
         throw new NotSupportedException($"The given file with the magic 0x{magic:X08} is not supported.");
     }

@@ -192,7 +192,7 @@ public class IconBrowserWidget : IDataWindowWidget
         else if (exc is not null)
         {
             ImGui.Dummy(this.iconSize);
-            using (Service<InterfaceManager>.Get().IconFontHandle?.Push())
+            using (Service<InterfaceManager>.Get().IconFontHandle?.Push(0))
             {
                 var iconText = FontAwesomeIcon.Ban.ToIconString();
                 var textSize = ImGui.CalcTextSize(iconText);

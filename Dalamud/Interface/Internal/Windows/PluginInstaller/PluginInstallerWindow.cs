@@ -1640,7 +1640,7 @@ internal class PluginInstallerWindow : Window, IDisposable
             ImGuiHelpers.ScaledDummy(10);
 
             ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.DalamudOrange);
-            ImGui.PushFont(InterfaceManager.IconFont);
+            ImGui.PushFont(InterfaceManager.IconFont, 0);
             ImGuiHelpers.CenteredText(FontAwesomeIcon.ExclamationTriangle.ToIconString());
             ImGui.PopFont();
             ImGui.PopStyleColor();
@@ -3436,7 +3436,7 @@ internal class PluginInstallerWindow : Window, IDisposable
             var problems = PluginValidator.CheckForProblems(devPlugin);
             if (problems.Count == 0)
             {
-                ImGui.PushFont(InterfaceManager.IconFont);
+                ImGui.PushFont(InterfaceManager.IconFont, 0);
                 ImGui.Text(FontAwesomeIcon.Check.ToIconString());
                 ImGui.PopFont();
                 ImGui.SameLine();
@@ -3610,7 +3610,7 @@ internal class PluginInstallerWindow : Window, IDisposable
         ImGui.SameLine();
         if (plugin.State == PluginState.Loaded || devNotDeletable)
         {
-            ImGui.PushFont(InterfaceManager.IconFont);
+            ImGui.PushFont(InterfaceManager.IconFont, 0);
             ImGuiComponents.DisabledButton(FontAwesomeIcon.TrashAlt.ToIconString());
             ImGui.PopFont();
 
@@ -3972,7 +3972,7 @@ internal class PluginInstallerWindow : Window, IDisposable
     {
         var positionOffset = ImGuiHelpers.ScaledVector2(0.0f, 1.0f);
         var cursorStart = ImGui.GetCursorPos() + positionOffset;
-        ImGui.PushFont(InterfaceManager.IconFont);
+        ImGui.PushFont(InterfaceManager.IconFont, 0);
 
         ImGui.PushStyleColor(ImGuiCol.Text, outline);
         foreach (var x in Enumerable.Range(-1, 3))

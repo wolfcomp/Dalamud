@@ -201,7 +201,7 @@ internal abstract class FontHandle : IFontHandle
         this.TryLock(out var errorMessage) ?? throw new InvalidOperationException(errorMessage);
 
     /// <inheritdoc/>
-    public IDisposable Push()
+    public IDisposable Push(float fontSizeBaseUnscaled)
     {
         ThreadSafety.AssertMainThread();
 
@@ -226,7 +226,7 @@ internal abstract class FontHandle : IFontHandle
             Service<InterfaceManager>.Get().EnqueueDeferredDispose(locked);
         }
 
-        var rented = SimplePushedFont.Rent(this.pushedFonts, font);
+        var rented = SimplePushedFont.Rent(this.pushedFonts, font, fontSizeBaseUnscaled);
         this.pushedFonts.Add(rented);
         return rented;
     }

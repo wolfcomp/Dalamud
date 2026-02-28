@@ -113,11 +113,11 @@ internal sealed class SettingsWindow : Window
         var fontAtlasFactory = Service<FontAtlasFactory>.Get();
         var localization = Service<Localization>.Get();
 
-        var scaleChanged = !Equals(ImGui.GetIO().FontGlobalScale, configuration.GlobalUiScale);
+        var scaleChanged = !Equals(ImGui.GetStyle().FontScaleMain, configuration.GlobalUiScale);
         var rebuildFont = !Equals(fontAtlasFactory.DefaultFontSpec, configuration.DefaultFontSpec);
         rebuildFont |= scaleChanged;
 
-        ImGui.GetIO().FontGlobalScale = configuration.GlobalUiScale;
+        ImGui.GetStyle().FontScaleMain = configuration.GlobalUiScale;
         if (scaleChanged)
         {
             interfaceManager.InvokeGlobalScaleChanged();

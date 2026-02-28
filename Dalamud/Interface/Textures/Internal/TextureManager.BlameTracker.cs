@@ -65,7 +65,7 @@ internal sealed partial class TextureManager
 
         try
         {
-            if (textureWrap.Handle.IsNull)
+            if (textureWrap.Handle.TexID.IsNull)
                 return textureWrap;
         }
         catch (ObjectDisposedException)
@@ -102,7 +102,7 @@ internal sealed partial class TextureManager
 
         try
         {
-            if (textureWrap.Handle.IsNull)
+            if (textureWrap.Handle.TexID.IsNull)
                 return textureWrap;
         }
         catch (ObjectDisposedException)
@@ -252,7 +252,7 @@ internal sealed partial class TextureManager
             0);
 
         /// <inheritdoc/>
-        public ImTextureID Handle
+        public ImTextureRef Handle
         {
             get
             {
@@ -261,7 +261,7 @@ internal sealed partial class TextureManager
 
                 this.srvDebugPreviewExpiryTick = Environment.TickCount64 + 1000;
                 if (!this.srvDebugPreview.IsEmpty())
-                    return new ImTextureID((nint)this.srvDebugPreview.Get());
+                    return new ImTextureRef(null, this.srvDebugPreview.Get());
                 var srvDesc = new D3D11_SHADER_RESOURCE_VIEW_DESC(
                     this.tex2D,
                     D3D_SRV_DIMENSION.D3D11_SRV_DIMENSION_TEXTURE2D);
@@ -275,7 +275,7 @@ internal sealed partial class TextureManager
                     return Service<DalamudAssetManager>.Get().Empty4X4.Handle;
 
                 srv.Swap(ref this.srvDebugPreview);
-                return new ImTextureID((nint)this.srvDebugPreview.Get());
+                return new ImTextureRef(null, this.srvDebugPreview.Get());
             }
         }
 

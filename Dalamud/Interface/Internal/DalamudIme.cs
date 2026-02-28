@@ -754,6 +754,7 @@ internal sealed unsafe class DalamudIme : IInternalDisposableService
             new Vector4(1, 1, 1, MathF.Pow(stateOpacity, 2)) * *ImGui.GetStyleColorVec4(ImGuiCol.WindowBg));
         var stateFg =
             ImGui.GetColorU32(new Vector4(1, 1, 1, stateOpacity) * *ImGui.GetStyleColorVec4(ImGuiCol.Text));
+        var fontSizeBase = imeIconFont.LegacySize; // TODO: Change this to new font scaling methods
         if (!expandUpward && drawIme)
         {
             if (stateBg >= 0x1000000)
@@ -766,7 +767,7 @@ internal sealed unsafe class DalamudIme : IInternalDisposableService
                         {
                             imeIconFont.RenderChar(
                                 drawList,
-                                imeIconFont.FontSize,
+                                fontSizeBase,
                                 cursor + new Vector2(dx, dy),
                                 stateBg,
                                 ime.inputModeIcon);
@@ -779,7 +780,7 @@ internal sealed unsafe class DalamudIme : IInternalDisposableService
             {
                 imeIconFont.RenderChar(
                     drawList,
-                    imeIconFont.FontSize,
+                    fontSizeBase,
                     cursor,
                     stateFg,
                     ime.inputModeIcon);
@@ -848,7 +849,7 @@ internal sealed unsafe class DalamudIme : IInternalDisposableService
                         {
                             imeIconFont.RenderChar(
                                 drawList,
-                                imeIconFont.FontSize,
+                                fontSizeBase,
                                 cursor + new Vector2(dx, dy),
                                 ImGui.GetColorU32(ImGuiCol.WindowBg),
                                 ime.inputModeIcon);
@@ -861,7 +862,7 @@ internal sealed unsafe class DalamudIme : IInternalDisposableService
             {
                 imeIconFont.RenderChar(
                     drawList,
-                    imeIconFont.FontSize,
+                    fontSizeBase,
                     cursor,
                     ImGui.GetColorU32(ImGuiCol.Text),
                     ime.inputModeIcon);

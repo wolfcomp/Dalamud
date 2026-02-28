@@ -99,7 +99,7 @@ public sealed class SystemFontId : IFontId
     /// Gets the file containing this font, and the font index within.
     /// </summary>
     /// <returns>The path and index.</returns>
-    public unsafe (string Path, int Index) GetFileAndIndex()
+    public unsafe (string Path, uint Index) GetFileAndIndex()
     {
         using var dwf = default(ComPtr<IDWriteFactory>);
         fixed (Guid* piid = &IID.IID_IDWriteFactory)
@@ -154,7 +154,7 @@ public sealed class SystemFontId : IFontId
 
         var path = stackalloc char[(int)pathSize + 1];
         flocal.Get()->GetFilePathFromKey(refKey, refKeySize, path, pathSize + 1).ThrowOnError();
-        return (new(path, 0, (int)pathSize), (int)fface.Get()->GetIndex());
+        return (new(path, 0, (int)pathSize), fface.Get()->GetIndex());
     }
 
     private bool Equals(SystemFontId other) => this.Family.Equals(other.Family) && this.Weight == other.Weight &&

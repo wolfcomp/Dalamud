@@ -331,7 +331,7 @@ internal sealed partial class ActiveNotification
         var windowSize = ImGui.GetWindowSize();
 
         var rtOffset = new Vector2(width, 0);
-        using (Service<InterfaceManager>.Get().IconFontHandle?.Push())
+        using (Service<InterfaceManager>.Get().IconFontHandle?.Push(0))
         {
             ImGui.PushClipRect(windowPos, windowPos + windowSize with { Y = height }, false);
 

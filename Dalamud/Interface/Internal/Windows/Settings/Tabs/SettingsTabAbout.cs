@@ -304,7 +304,7 @@ Contribute at: https://github.com/goatcorp/Dalamud
 
             if (this.thankYouFont != null)
             {
-                using var fontPush = this.thankYouFont.Push();
+                using var fontPush = this.thankYouFont.Push(0);
                 var thankYouLenX = ImGui.CalcTextSize(ThankYouText).X;
 
                 ImGui.Dummy(new Vector2((windowX / 2) - (thankYouLenX / 2), 0f));

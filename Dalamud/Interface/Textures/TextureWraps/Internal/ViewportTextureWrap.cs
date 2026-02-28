@@ -52,12 +52,12 @@ internal sealed class ViewportTextureWrap : IDalamudTextureWrap, IDeferredDispos
     ~ViewportTextureWrap() => this.Dispose(false);
 
     /// <inheritdoc/>
-    public unsafe ImTextureID Handle
+    public unsafe ImTextureRef Handle
     {
         get
         {
             var t = (nint)this.srv.Get();
-            return t == nint.Zero ? Service<DalamudAssetManager>.Get().Empty4X4.Handle : new ImTextureID((nint)this.srv.Get());
+            return t == nint.Zero ? Service<DalamudAssetManager>.Get().Empty4X4.Handle : new ImTextureRef(null, this.srv.Get());
         }
     }
 

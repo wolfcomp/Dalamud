@@ -26,8 +26,9 @@ internal sealed class SimplePushedFont : IDisposable
     /// </summary>
     /// <param name="stack">The <see cref="IFontHandle"/>-private stack.</param>
     /// <param name="fontPtr">The font pointer being pushed.</param>
+    /// <param name="fontSizeBaseUnscaled">The font size to use.</param>
     /// <returns>The rented instance of <see cref="SimplePushedFont"/>.</returns>
-    public static SimplePushedFont Rent(List<IDisposable> stack, ImFontPtr fontPtr)
+    public static SimplePushedFont Rent(List<IDisposable> stack, ImFontPtr fontPtr, float fontSizeBaseUnscaled)
     {
         var rented = Pool.Get();
         Debug.Assert(rented.font.IsNull, "Rented object must not have its font set");
@@ -36,7 +37,7 @@ internal sealed class SimplePushedFont : IDisposable
         if (!fontPtr.IsNull && fontPtr.IsLoaded())
         {
             rented.font = fontPtr;
-            ImGui.PushFont(fontPtr);
+            ImGui.PushFont(fontPtr, fontSizeBaseUnscaled);
         }
 
         return rented;

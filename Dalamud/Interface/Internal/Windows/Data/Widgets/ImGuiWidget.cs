@@ -419,7 +419,7 @@ internal class ImGuiWidget : IDataWindowWidget
 
         public DisposeLoggingTextureWrap(IDalamudTextureWrap inner) => this.inner = inner;
 
-        public ImTextureID Handle => this.inner.Handle;
+        public ImTextureRef Handle => this.inner.Handle;
 
         public int Width => this.inner.Width;
 

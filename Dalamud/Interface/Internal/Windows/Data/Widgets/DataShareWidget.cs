@@ -117,7 +117,7 @@ internal class DataShareWidget : IDataWindowWidget
             {
                 fixed (byte* dataPtr = data)
                 {
-                    ImGui.InputTextMultiline("text"u8, dataPtr, (ulong)data.Length, ImGui.GetContentRegionAvail(), ImGuiInputTextFlags.ReadOnly);
+                    ImGui.InputTextMultiline("text"u8, dataPtr, (nuint)data.Length, ImGui.GetContentRegionAvail(), ImGuiInputTextFlags.ReadOnly);
                 }
             }
         }

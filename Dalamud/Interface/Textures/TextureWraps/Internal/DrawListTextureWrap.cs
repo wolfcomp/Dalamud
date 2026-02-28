@@ -60,14 +60,14 @@ internal sealed unsafe partial class DrawListTextureWrap : IDrawListTextureWrap,
             this.device.Get()->GetImmediateContext(pdc);
 
         this.emptyTexture = emptyTexture;
-        this.srv = new((ID3D11ShaderResourceView*)emptyTexture.Handle.Handle);
+        this.srv = new((ID3D11ShaderResourceView*)emptyTexture.Handle.TexID);
     }
 
     /// <summary>Finalizes an instance of the <see cref="DrawListTextureWrap"/> class.</summary>
     ~DrawListTextureWrap() => this.RealDispose();
 
     /// <inheritdoc/>
-    public ImTextureID Handle => new((nint)this.srv.Get());
+    public ImTextureRef Handle => new(null, this.srv.Get());
 
     /// <inheritdoc cref="IDrawListTextureWrap.Width"/>
     public int Width
@@ -228,7 +228,7 @@ internal sealed unsafe partial class DrawListTextureWrap : IDrawListTextureWrap,
             this.rtvPremultiplied.Reset();
             this.width = newWidth;
             this.Height = newHeight;
-            this.srv = new((ID3D11ShaderResourceView*)this.emptyTexture.Handle.Handle);
+            this.srv = new((ID3D11ShaderResourceView*)this.emptyTexture.Handle.TexID);
             return S.S_FALSE;
         }
 

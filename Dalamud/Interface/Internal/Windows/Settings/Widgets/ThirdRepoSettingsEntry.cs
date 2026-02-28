@@ -79,7 +79,7 @@ internal class ThirdRepoSettingsEntry : SettingsEntry
         config.ThirdRepoSpeedbumpDismissed ??= config.ThirdRepoList.Any(x => x.IsEnabled);
         var disclaimerDismissed = config.ThirdRepoSpeedbumpDismissed.Value;
 
-        ImGui.PushFont(InterfaceManager.IconFont);
+        ImGui.PushFont(InterfaceManager.IconFont, 0);
         ImGui.PushStyleColor(ImGuiCol.Text, ImGuiColors.DalamudOrange);
         ImGui.TextWrapped(FontAwesomeIcon.ExclamationTriangle.ToIconString());
         ImGui.PopFont();
@@ -90,7 +90,7 @@ internal class ThirdRepoSettingsEntry : SettingsEntry
         ImGui.SameLine();
         ImGuiHelpers.ScaledDummy(2);
         ImGui.SameLine();
-        ImGui.PushFont(InterfaceManager.IconFont);
+        ImGui.PushFont(InterfaceManager.IconFont, 0);
         ImGui.TextWrapped(FontAwesomeIcon.ExclamationTriangle.ToIconString());
         ImGui.PopFont();
 
